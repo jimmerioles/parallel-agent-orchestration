@@ -88,6 +88,7 @@
   <h2>When something looks wrong</h2>
   <ul class="compact">
     <li>Agent state wrong? <code>herdr agent list</code>, then <code>herdr agent explain &lt;target&gt;</code>.</li>
+    <li><code>linked_worktree_source</code> when creating a worktree? Worktree actions start from the repo’s <em>parent workspace</em>. Run from there, or add <code>--cwd &lt;main-checkout&gt;</code> (keep <code>--base &lt;your-branch&gt;</code>).</li>
     <li>Keybinding does nothing? The terminal or Hyprland ate the chord — check <kbd>prefix</kbd> <kbd>?</kbd> and <code>herdr.dev/docs/keyboard/</code>.</li>
     <li>Server weirdness? <code>herdr status</code>; logs live in <code>~/.config/herdr/</code>.</li>
     <li>Docs drift: verify against <code>herdr --version</code> — this card is v0.8.2-era.</li>

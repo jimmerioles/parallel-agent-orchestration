@@ -29,6 +29,11 @@ learning evidence lives in `learning-records/`.
   `ga`, `gd`) — fallback control room if herdr is unavailable.
 - Repo: this worktree is branch `dsv41fmax`; main checkout at `~/Work/parallel-agent-orchestration`
   (branch `master`). No git remote configured. Workspace files stay on this branch until merged.
+- **Worktree quirk (verified 2026-10-05):** `herdr worktree create` refuses to run from a linked
+  worktree — error `linked_worktree_source`, “start from the repo parent workspace.” Verified
+  workaround from inside this worktree: `--cwd /home/jimmerioles/Work/parallel-agent-orchestration`
+  plus explicit `--base` (otherwise the base is the parent checkout’s HEAD, i.e. `master`).
+  Lesson 0002 uses the workaround.
 - Openers available: `xdg-open`, `omarchy-launch-browser`. Screenshot QA: `chromium --headless`.
 
 ## Course sketch (working — revise as learning records accumulate)

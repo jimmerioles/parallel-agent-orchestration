@@ -122,20 +122,26 @@
   <h2>Part 2 · Manufacture independence</h2>
 
   <p>A worktree is one repository with multiple working directories. Each gets its own branch,
-  so each agent can edit “the same file” without ever touching the other’s copy. Create both
-  from your shell tab (its directory is already this repo):</p>
+  so each agent can edit “the same file” without ever touching the other’s copy. Herdr only
+  <em>starts</em> worktree actions from the repo’s <strong>parent workspace</strong> — and you’re
+  inside a linked worktree — so point <code>--cwd</code> at the main checkout when you create
+  them:</p>
 
   <ol class="steps" style="counter-reset: step 3">
     <li class="step">
       <span class="step-body">
-        <p><strong>Create two worktrees, one per worker.</strong> Run each command, one after
-        the other:</p>
-        <div class="brief" id="cmd-wt">herdr worktree create --branch worker-a
-herdr worktree create --branch worker-b<button class="copy-btn" data-copy="#cmd-wt">Copy</button></div>
+        <p><strong>Create two worktrees, one per worker.</strong> Run each command in your shell
+        tab, one after the other:</p>
+        <div class="brief" id="cmd-wt">herdr worktree create --cwd /home/jimmerioles/Work/parallel-agent-orchestration --branch worker-a --base dsv41fmax
+herdr worktree create --cwd /home/jimmerioles/Work/parallel-agent-orchestration --branch worker-b --base dsv41fmax<button class="copy-btn" data-copy="#cmd-wt">Copy</button></div>
         <p class="step-hint">Each command creates a checkout at
-        <code>~/.herdr/worktrees/parallel-agent-orchestration/&lt;branch&gt;</code>, branches it
-        from your current branch, and opens it as a new workspace — no focus stealing. Two new
+        <code>~/.herdr/worktrees/parallel-agent-orchestration/&lt;branch&gt;</code>, branched from
+        your course branch, and opens it as a new workspace — no focus stealing. Two new
         workspaces appear in the sidebar, grouped with this repo.</p>
+        <p class="step-hint">Alternative to <code>--cwd</code>: switch to the parent workspace in
+        the sidebar (the main checkout), open a shell tab there, and run the same commands
+        without <code>--cwd</code> — but keep <code>--base dsv41fmax</code>, or you’ll branch
+        from <code>master</code> instead.</p>
       </span>
     </li>
 
