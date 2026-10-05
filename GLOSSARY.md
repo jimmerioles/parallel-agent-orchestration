@@ -49,3 +49,18 @@ machine-verifiable, and low-stakes. If any leg is missing, fix it before adding 
 _Avoid_: “good candidate”, “parallel-safe”
 _Source_: distilled from Willison (2025), Anthropic (2024/2025)
 _Taught_: [Lesson 0001](lessons/0001-make-it-two.html)
+
+**Lost update**:
+The silent failure of two writers sharing one checkout: both write the same file, the last
+writer wins, and the other agent’s work disappears with no error from anyone.
+_Avoid_: conflict, clash (a conflict is at least visible)
+_Source_: [Cognition, 2025](https://cognition.com/blog/dont-build-multi-agents)
+_Taught_: [Lesson 0002](lessons/0002-two-agents-one-file.html)
+
+**git worktree**:
+A second working directory for the same repository, on its own branch, with its own files and
+index; the isolation primitive for parallel agents. Herdr wraps it: `herdr worktree create`
+makes a checkout under `~/.herdr/worktrees/<repo>/<branch>` and opens it as a workspace.
+_Avoid_: clone, copy, checkout (as a synonym for worktree)
+_Source_: [git worktree manual](https://git-scm.com/docs/git-worktree); [herdr CLI](https://herdr.dev/docs/cli-reference/)
+_Taught_: [Lesson 0002](lessons/0002-two-agents-one-file.html)

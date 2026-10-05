@@ -32,10 +32,10 @@ learning evidence lives in `learning-records/`.
 - Openers available: `xdg-open`, `omarchy-launch-browser`. Screenshot QA: `chromium --headless`.
 
 ## Course sketch (working — revise as learning records accumulate)
-1. ✅ built — *Make It Two*: two opencode workers, independent files, sidebar states, review.
-2. *Two Agents, One File*: the collision problem → git worktrees (`herdr worktree create`).
-3. *The Brief*: specification + verification so done is provable.
-4. *Merge & Review*: integrating parallel work; review technique.
+1. ✅ built & completed — *Make It Two*: two opencode workers, independent files, sidebar states, review.
+2. ✅ built — *Two Agents, One File*: deliberate lost update, then `herdr worktree create` isolation (worker-a / worker-b).
+3. *Merge Day*: review both branches, merge sequentially, `herdr worktree remove`, what isolation costs.
+4. *The Brief*: specification + verification so done is provable.
 5. *The Fleet*: 3–5 agents, WIP limits, blocked-state triage.
 6. *Agent-Driven Orchestration*: `herdr` CLI/socket from an orchestrator agent; opencode subagents.
 7. *SE 3.0 in Practice*: ACE/AEE framing, harness engineering, what stays human.
@@ -44,3 +44,5 @@ learning evidence lives in `learning-records/`.
 - Quiz options matched in word count; immediate feedback; retrieval from memory.
 - Every lesson: one primary source, one review step, reminder to ask follow-ups.
 - Keep the vocabulary: GLOSSARY.md terms only, once taught.
+- **Git convention:** committing agent output IS the “accept” step of the orchestration loop
+  (done for lesson 0001: `7a442cf`). Course material is committed as separate milestones.

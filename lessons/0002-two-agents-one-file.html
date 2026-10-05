@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 0002 — Two Agents, One File</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+<style>
+  /* One-off for this lesson: before/after checkout diagram */
+  .checkouts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.4rem 0;
+    font-family: ui-sans-serif, system-ui, "DejaVu Sans", sans-serif;
+    font-size: 0.78rem;
+  }
+  .checkouts .box {
+    border: 1.5px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.8rem 0.9rem;
+  }
+  .checkouts .box h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .checkouts .box p { margin: 0.2rem 0; color: var(--muted); }
+  .checkouts .before { border-color: var(--bad); }
+  .checkouts .after { border-color: var(--good); }
+  .checkouts .before h3 { color: var(--bad); }
+  .checkouts .after h3 { color: var(--good); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0001-make-it-two.html">← Lesson 0001</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Lesson 0002 · ~15 minutes · hands-on</p>
+  <h1>Two Agents, One File</h1>
+  <p class="subtitle">Watch work vanish silently — then make it impossible with git worktrees.</p>
+
+  <h2>The one idea</h2>
+
+  <p>Lesson 0001 was safe because each worker owned a <em>different</em> file. Real tasks rarely
+  cooperate: two changes often touch the same module, the same config, the same file. Run two
+  agents against one shared checkout and you get the classic failure of concurrent writes — the
+  <strong>lost update</strong>. Nothing crashes. Nothing warns you. One agent’s work is simply
+  gone, because both agents were told to bring the file to <em>their</em> version
+  (<a href="https://cognition.com/blog/dont-build-multi-agents">Cognition: “actions carry
+  implicit decisions”</a>).</p>
+
+  <p>You cannot fix this with better prompting. You fix it with <strong>isolation</strong>:
+  a <strong>git worktree</strong> gives each agent its own checkout of the same repository —
+  its own files, its own branch, its own git state — so parallel work cannot trample itself.
+  It is the same trick Anthropic documents for running parallel Claude Code sessions
+  (<a href="https://www.anthropic.com/engineering/claude-code-best-practices">Claude Code best
+  practices</a>), and herdr wraps it in one command
+  (<a href="https://herdr.dev/docs/cli-reference/">herdr CLI reference</a>).</p>
+
+  <div class="note">
+    <span class="label">You already live in one</span>
+    <p>This lesson’s workspace is a git worktree (<code>dsv41fmax</code>) of
+    <code>parallel-agent-orchestration</code>. Today you’ll make two more — one per worker.</p>
+  </div>
+
+  <h2>Part 1 · Provoke the collision</h2>
+
+  <p>You should still have Worker A and Worker B panes from Lesson 0001, both idle. If you
+  closed them: split twice and run <kbd>c</kbd> in each. Both panes are in this same checkout —
+  that’s the point.</p>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Give Worker A this brief</strong> (paste, Enter, wait for <code>idle</code>):</p>
+        <div class="brief" id="collide-a">Create or overwrite the file sandbox/shared/notes.md with exactly this content: the heading "# Shared notes", a blank line, then the line "A: two agents, one checkout." Create or modify no other file. Reply with just: done<button class="copy-btn" data-copy="#collide-a">Copy</button></div>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Give Worker B this brief</strong> (same file, same shape — wait for
+        <code>idle</code>):</p>
+        <div class="brief" id="collide-b">Create or overwrite the file sandbox/shared/notes.md with exactly this content: the heading "# Shared notes", a blank line, then the line "B: two agents, one checkout." Create or modify no other file. Reply with just: done<button class="copy-btn" data-copy="#collide-b">Copy</button></div>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Inspect the damage.</strong> Open a shell — new tab: <kbd>ctrl</kbd>+<kbd>space</kbd>
+        then <kbd>c</kbd> — and run:</p>
+        <div class="brief" id="cmd-cat-1">cat sandbox/shared/notes.md<button class="copy-btn" data-copy="#cmd-cat-1">Copy</button></div>
+        <p>Only <strong>B’s</strong> line is there. A’s work is gone, and <em>nothing</em> reported
+        a problem: not the agent, not git, not the sidebar. Sequential briefs can’t save you —
+        and sent simultaneously it’s worse, a genuine race whose winner changes run to run.</p>
+      </span>
+    </li>
+  </ol>
+
+  <div class="checkouts">
+    <div class="box before">
+      <h3>One checkout</h3>
+      <p>Both agents write the same file.</p>
+      <p>Last writer wins → lost update.</p>
+      <p>Shared git state → stashes, branch switches, index conflicts.</p>
+    </div>
+    <div class="box after">
+      <h3>Two worktrees</h3>
+      <p>Each agent owns a checkout.</p>
+      <p>Both versions survive → merge deliberately.</p>
+      <p>Independent git state → no interference.</p>
+    </div>
+  </div>
+
+  <h2>Part 2 · Manufacture independence</h2>
+
+  <p>A worktree is one repository with multiple working directories. Each gets its own branch,
+  so each agent can edit “the same file” without ever touching the other’s copy. Create both
+  from your shell tab (its directory is already this repo):</p>
+
+  <ol class="steps" style="counter-reset: step 3">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Create two worktrees, one per worker.</strong> Run each command, one after
+        the other:</p>
+        <div class="brief" id="cmd-wt">herdr worktree create --branch worker-a
+herdr worktree create --branch worker-b<button class="copy-btn" data-copy="#cmd-wt">Copy</button></div>
+        <p class="step-hint">Each command creates a checkout at
+        <code>~/.herdr/worktrees/parallel-agent-orchestration/&lt;branch&gt;</code>, branches it
+        from your current branch, and opens it as a new workspace — no focus stealing. Two new
+        workspaces appear in the sidebar, grouped with this repo.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Send each worker into its own checkout.</strong> Click the <code>worker-a</code>
+        workspace in the sidebar (or <kbd>alt</kbd>+<kbd>↓</kbd> to cycle workspaces). In its
+        pane, run <kbd>c</kbd>, then paste Worker A’s <em>new</em> brief:</p>
+        <div class="brief" id="iso-a">Create or overwrite the file sandbox/shared/notes.md with exactly this content: the heading "# Shared notes", a blank line, then the line "A: isolated in my own worktree." Create or modify no other file. Reply with just: done<button class="copy-btn" data-copy="#iso-a">Copy</button></div>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Do the same in the <code>worker-b</code> workspace</strong> — start
+        <kbd>c</kbd>, then paste Worker B’s new brief:</p>
+        <div class="brief" id="iso-b">Create or overwrite the file sandbox/shared/notes.md with exactly this content: the heading "# Shared notes", a blank line, then the line "B: isolated in my own worktree." Create or modify no other file. Reply with just: done<button class="copy-btn" data-copy="#iso-b">Copy</button></div>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Verify both survived.</strong> Back in your shell tab, run:</p>
+        <div class="brief" id="cmd-verify">cat ~/.herdr/worktrees/parallel-agent-orchestration/worker-a/sandbox/shared/notes.md
+cat ~/.herdr/worktrees/parallel-agent-orchestration/worker-b/sandbox/shared/notes.md
+git worktree list<button class="copy-btn" data-copy="#cmd-verify">Copy</button></div>
+        <p>One file, two agents, <em>both</em> versions intact — in separate checkouts on
+        separate branches. <code>git worktree list</code> shows four checkouts: the main clone,
+        this course worktree, and the two worker islands.</p>
+      </span>
+    </li>
+  </ol>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p>Both <code>worker-a</code> and <code>worker-b</code> checkouts contain a
+    <code>sandbox/shared/notes.md</code> with their own line, and <code>git worktree list</code>
+    shows all four checkouts. Nothing was lost this time.</p>
+  </div>
+
+  <div class="note">
+    <span class="label">Leave them standing</span>
+    <p>Both worktrees stay for Lesson 0003, where you merge the branches and clean up. Merging
+    is the tax isolation buys you — paid deliberately, in one place, instead of silently, in
+    your file.</p>
+  </div>
+
+  <h2>What just happened</h2>
+
+  <p>The Rule from Lesson 0001 hasn’t changed — it says <em>independent</em>. Worktrees are how
+  you <strong>make</strong> coupled work independent: same repository, separate worlds, one
+  branch per worker. The failure mode moves from “silent lost update” to “visible merge,” and
+  visible problems are the only kind you can manage.</p>
+
+  <div class="rulebox">
+    <span class="label">The Rule, sharpened</span>
+    <p>Parallel agents may share <strong>history</strong> (one repository) but never a
+    <strong>working directory</strong>. One task, one branch, one worktree, one agent — then
+    merge on purpose.</p>
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <p>From memory:</p>
+
+  <div class="quiz">
+    <p class="q">Why did Worker A’s line vanish in Part 1?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Both agents shared one checkout</button>
+      <button class="option">Git rejected the second file write</button>
+      <button class="option">The sidebar lost its state briefly</button>
+      <button class="option">Permissions blocked the first write</button>
+    </div>
+    <p class="explain">Same directory, same file, two overwrites: last writer wins. No error
+    surfaces anywhere — that’s what makes shared-checkout parallelism dangerous.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What does a git worktree give each agent?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Its own working directory</button>
+      <button class="option">Its own review queue</button>
+      <button class="option">Its own API quota</button>
+      <button class="option">Its own model weights</button>
+    </div>
+    <p class="explain">A separate checkout with its own branch and git state, all sharing one
+    repository history. Agents stop trampling each other; merging becomes an explicit step.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Parallel safety on a shared file comes from…?</p>
+    <div class="options">
+      <button class="option">Faster models, then shorter reviews</button>
+      <button class="option">Larger context, then firmer prompting</button>
+      <button class="option" data-correct="true">Isolation first, then deliberate merging</button>
+      <button class="option">Backups first, then quick overwriting</button>
+    </div>
+    <p class="explain">Prompting cannot serialize concurrent writes. Isolate the writers,
+    then merge their branches on purpose — the merge is made visible, not eliminated.</p>
+  </div>
+
+  <h2>Before next time</h2>
+
+  <p><strong>Primary source (10 minutes):</strong> the
+  <a href="https://git-scm.com/docs/git-worktree">git worktree manual</a> — read the description
+  and the <code>add</code> / <code>list</code> / <code>remove</code> sections. You’ve now used
+  all three shapes; the manual will make them permanent. Optional companion:
+  herdr’s <a href="https://herdr.dev/docs/cli-reference/">worktree commands</a>.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>If a worktree didn’t appear, a brief failed, or you want to understand what a branch
+    really is — ask the agent in the teaching pane. Bring what you saw; nothing is too small.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>Next lesson: <em>Merge Day</em> — review both branches, merge them into one, remove the
+    worktrees, and learn what isolation costs.</p>
+  </div>
+
+</div>
+</body>
+</html>
