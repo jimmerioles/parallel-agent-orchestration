@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 0003 — Merge Day</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+<style>
+  /* One-off for this lesson: conflict-marker explainer */
+  .conflict-demo {
+    font-family: ui-monospace, "DejaVu Sans Mono", monospace;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1rem 1.1rem;
+    margin: 1.2rem 0;
+    white-space: pre;
+  }
+  .conflict-demo .ours { color: var(--good); }
+  .conflict-demo .theirs { color: var(--accent); }
+  .conflict-demo .marker { color: var(--bad); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0002-two-agents-one-file.html">← Lesson 0002</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Lesson 0003 · ~15 minutes · hands-on</p>
+  <h1>Merge Day</h1>
+  <p class="subtitle">Isolation sent the bill. Pay it visibly — one conflict, resolved by hand.</p>
+
+  <h2>The one idea</h2>
+
+  <p>Worktrees didn’t make collisions impossible — they <em>postponed</em> and
+  <em>contained</em> them. The integration step you deferred is now due: merging the worker
+  branches back into your course branch. Here is the payoff. Where Lesson 0002’s collision was
+  silent and destructive, a merge collision is loud and safe: git
+  <strong>refuses to guess</strong>, stops, and asks you to decide
+  (<a href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging">Pro Git,
+  §3.2 Basic Branching and Merging</a>).</p>
+
+  <p class="sidenote">This is why “merge conflict” shouldn’t scare you: a conflict is the
+  system working. Nothing is lost; a human is simply required — which, in this discipline, is
+  the point.</p>
+
+  <p>Plan: review and <strong>accept</strong> each worker’s branch, merge them one at a time,
+  resolve the conflict by combining both contributions, then retire the worktrees.</p>
+
+  <h2>Part 1 · Accept each worker’s branch</h2>
+
+  <p>Your two worker checkouts each hold one new file, still uncommitted. In a real run this is
+  where you’d read the diff. Do it for <code>worker-a</code> first: click its workspace in the
+  sidebar, open a shell tab (<kbd>ctrl</kbd>+<kbd>space</kbd> then <kbd>c</kbd>), and run:</p>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Review and commit in <code>worker-a</code>:</strong></p>
+        <div class="brief" id="accept-a">git status --short
+git add sandbox/shared/notes.md
+git diff --cached
+git commit -m "notes: accept worker a"<button class="copy-btn" data-copy="#accept-a">Copy</button></div>
+        <p class="step-hint"><code>status</code> shows the new file; <code>diff --cached</code>
+        shows exactly what you’re accepting (the whole file — it’s new); the commit records it
+        on the <code>worker-a</code> branch.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Same in the <code>worker-b</code> workspace</strong> — new shell tab, same
+        commands with the other message:</p>
+        <div class="brief" id="accept-b">git status --short
+git add sandbox/shared/notes.md
+git diff --cached
+git commit -m "notes: accept worker b"<button class="copy-btn" data-copy="#accept-b">Copy</button></div>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 2 · Merge, one at a time</h2>
+
+  <p>Now go back to the teaching workspace and its shell tab. First, clear the Lesson 0002
+  artifact — the never-accepted file the losing worker left behind:</p>
+
+  <ol class="steps" style="counter-reset: step 2">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Remove the collision artifact, then merge the first worker:</strong></p>
+        <div class="brief" id="merge-a">rm -rf sandbox/shared
+git status --short
+git merge worker-a<button class="copy-btn" data-copy="#merge-a">Copy</button></div>
+        <p>This one is easy: <code>worker-a</code>’s commit sits directly on top of your branch,
+        so git just moves the pointer — a <strong>fast-forward</strong>.</p>
+        <p class="step-hint">Sidenote worth knowing: if you skip the <code>rm</code>, git refuses
+        the merge — “untracked working tree files would be overwritten.” That refusal is
+        protection, not failure; clear the artifact and merge again.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Merge the second worker — and meet the conflict:</strong></p>
+        <div class="brief" id="merge-b">git merge worker-b
+git status --short<button class="copy-btn" data-copy="#merge-b">Copy</button></div>
+        <p><code>CONFLICT (add/add): Merge conflict in sandbox/shared/notes.md</code>. Both
+        branches added the same file from the same base, with different content. Git stopped.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Resolve it by hand.</strong> Open the file in your editor:</p>
+        <div class="brief" id="edit-cmd">$EDITOR sandbox/shared/notes.md<button class="copy-btn" data-copy="#edit-cmd">Copy</button></div>
+        <p>You’ll see markers like this — <span style="color:var(--good)">yours</span>,
+        <span style="color:var(--accent)">theirs</span>, and the fence git inserted:</p>
+        <div class="conflict-demo"><span class="marker">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span> <span class="ours">HEAD</span>
+# Shared notes
+
+A: isolated in my own worktree.
+<span class="marker">=======</span>
+# Shared notes
+
+<span class="theirs">B: isolated in my own worktree.</span>
+<span class="marker">&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span> <span class="theirs">worker-b</span></div>
+        <p>Make the file read exactly this — one heading, both lines, no marker lines:</p>
+        <div class="brief" id="resolved"># Shared notes
+
+A: isolated in my own worktree.
+B: isolated in my own worktree.<button class="copy-btn" data-copy="#resolved">Copy</button></div>
+        <p>Then stage and conclude the merge:</p>
+        <div class="brief" id="finish-merge">git add sandbox/shared/notes.md
+git commit -m "merge: combine worker notes"<button class="copy-btn" data-copy="#finish-merge">Copy</button></div>
+        <p class="step-hint">Chickened out? Before you commit, <code>git merge --abort</code>
+        rewinds everything — conflicts are never a corner you can’t back out of.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Verify the integration:</strong></p>
+        <div class="brief" id="verify-merge">cat sandbox/shared/notes.md
+git log --oneline --graph --all -8<button class="copy-btn" data-copy="#verify-merge">Copy</button></div>
+        <p>Both contributions, one file, one history. The graph shows the branch and the merge
+        point.</p>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 3 · Retire the worktrees</h2>
+
+  <p>The branches are merged, so the checkouts have done their job. Find their herdr workspace
+  IDs, then remove each checkout — herdr runs <code>git worktree remove</code> and closes the
+  workspace, but <strong>keeps the branch</strong>:</p>
+
+  <ol class="steps" style="counter-reset: step 6">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>List the worker workspaces:</strong></p>
+        <div class="brief" id="list-ws">herdr worktree list | jq -r '.result.worktrees[] | select(.branch | startswith("worker-")) | "\(.branch)  \(.open_workspace_id)"'<button class="copy-btn" data-copy="#list-ws">Copy</button></div>
+        <p class="step-hint">Two lines, e.g. <code>worker-a  w27</code> and
+        <code>worker-b  w28</code>. Note each ID.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Remove each checkout</strong> (substitute your IDs):</p>
+        <div class="brief" id="remove-ws">herdr worktree remove --workspace &lt;worker-a-id&gt;
+herdr worktree remove --workspace &lt;worker-b-id&gt;<button class="copy-btn" data-copy="#remove-ws">Copy</button></div>
+        <p class="step-hint">If git refuses because the checkout is dirty: look first. Add
+        <code>--force</code> only when you truly mean “discard whatever is there.”</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Delete the spent branches and confirm:</strong></p>
+        <div class="brief" id="cleanup">git branch -d worker-a worker-b
+git worktree list<button class="copy-btn" data-copy="#cleanup">Copy</button></div>
+        <p><code>-d</code> (not <code>-D</code>) only deletes branches that are fully merged —
+        if git refuses, something didn’t make it in, and you want to know. You should be back to
+        two checkouts: main and this course worktree.</p>
+      </span>
+    </li>
+  </ol>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p><code>sandbox/shared/notes.md</code> contains both A’s and B’s lines, the log shows a
+    merge commit, and <code>git worktree list</code> is back to two checkouts with both worker
+    branches deleted.</p>
+  </div>
+
+  <h2>What just happened</h2>
+
+  <p>You closed the loop that Lesson 0002 opened: isolation bought conflict-free parallel work,
+  and integration paid for it with one small, visible, human decision. That trade — defer the
+  collision, make it loud, resolve it on purpose — is the core economics of parallel
+  orchestration at any scale.</p>
+
+  <div class="rulebox">
+    <span class="label">The Rule, complete</span>
+    <p>One task · one branch · one worktree · one agent · one deliberate merge. Parallel work
+    you can’t integrate isn’t progress — it’s inventory.</p>
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz">
+    <p class="q">Why is a merge conflict better than a lost update?</p>
+    <div class="options">
+      <button class="option" data-correct="true">It stops and asks you</button>
+      <button class="option">It merges without your help</button>
+      <button class="option">It reverts both workers’ changes</button>
+      <button class="option">It picks the newest version</button>
+    </div>
+    <p class="explain">A conflict is loud, non-destructive, and human-gated. A lost update is
+    silent and unrecoverable. Prefer the failure mode you can see.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">After isolation, what is the deliberate integration step?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Review, then merge branches</button>
+      <button class="option">Restart both agent sessions</button>
+      <button class="option">Copy files between checkouts</button>
+      <button class="option">Delete the older branch</button>
+    </div>
+    <p class="explain">Each branch is reviewed and accepted, then merged in sequence — first
+    worker clean, second worker with a conflict you resolve by hand.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What does <code>herdr worktree remove</code> do to the branch?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Removes the checkout, keeps branch</button>
+      <button class="option">Removes the checkout and branch</button>
+      <button class="option">Removes the branch, keeps history</button>
+      <button class="option">Removes all uncommitted changes too</button>
+    </div>
+    <p class="explain">It deletes only the checkout. Branches outlive worktrees, so you delete
+    a spent branch yourself with <code>git branch -d</code> once it is merged.</p>
+  </div>
+
+  <h2>Before next time</h2>
+
+  <p><strong>Primary source (15 minutes):</strong>
+  <a href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging">Pro Git
+  §3.2 — Basic Branching and Merging</a>. You just lived every concept in it: fast-forward,
+  add/add conflict, conflict markers, abort. Reading it now will cement the vocabulary.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>If the merge output didn’t match the lesson, or you want to know what
+    <code>git merge --abort</code> actually did to your files — ask in the teaching pane. Bring
+    the exact output; git’s messages are precise, and so are the answers.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>Next lesson: <em>The Brief</em> — writing task specs agents can’t misread, so “done” is
+    provable before a single agent starts.</p>
+  </div>
+
+</div>
+</body>
+</html>

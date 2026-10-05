@@ -64,3 +64,11 @@ makes a checkout under `~/.herdr/worktrees/<repo>/<branch>` and opens it as a wo
 _Avoid_: clone, copy, checkout (as a synonym for worktree)
 _Source_: [git worktree manual](https://git-scm.com/docs/git-worktree); [herdr CLI](https://herdr.dev/docs/cli-reference/)
 _Taught_: [Lesson 0002](lessons/0002-two-agents-one-file.html)
+
+**Merge conflict**:
+Git’s refusal to combine two branches that changed the same lines: it stops, fences the file
+with conflict markers, and asks a human to decide. The visible, recoverable counterpart of a
+lost update.
+_Avoid_: “merge error”, “git broke”
+_Source_: [Pro Git §3.2](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)
+_Taught_: [Lesson 0003](lessons/0003-merge-day.html)

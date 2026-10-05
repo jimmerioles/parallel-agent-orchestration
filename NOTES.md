@@ -38,9 +38,9 @@ learning evidence lives in `learning-records/`.
 
 ## Course sketch (working — revise as learning records accumulate)
 1. ✅ built & completed — *Make It Two*: two opencode workers, independent files, sidebar states, review.
-2. ✅ built — *Two Agents, One File*: deliberate lost update, then `herdr worktree create` isolation (worker-a / worker-b).
-3. *Merge Day*: review both branches, merge sequentially, `herdr worktree remove`, what isolation costs.
-4. *The Brief*: specification + verification so done is provable.
+2. ✅ built & completed — *Two Agents, One File*: deliberate lost update, then worktree isolation (worker-a / worker-b).
+3. ✅ built — *Merge Day*: accept each branch, fast-forward + add/add conflict, resolve by hand, retire worktrees.
+4. *The Brief*: specification + verification so done is provable before agents start.
 5. *The Fleet*: 3–5 agents, WIP limits, blocked-state triage.
 6. *Agent-Driven Orchestration*: `herdr` CLI/socket from an orchestrator agent; opencode subagents.
 7. *SE 3.0 in Practice*: ACE/AEE framing, harness engineering, what stays human.
