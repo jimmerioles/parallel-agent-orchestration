@@ -59,6 +59,10 @@ installed versions before teaching them.
   room and a source of useful one-liners. Use for: Omarchy-native workflows alongside herdr.
 - [Manual: git worktree](https://git-scm.com/docs/git-worktree)
   The isolation primitive for parallel agents. Use for: lesson 2 onward.
+- [Tool: hunk — terminal diff viewer for agent-authored changesets (Omarchy 4 default)](https://github.com/modem-dev/hunk) · [hunk.dev](https://hunk.dev)
+  Local: `hunk 0.23.0`. Reviews working tree, staged changes, branch-vs-base, history; accepts
+  an `--agent-context` JSON rationale sidecar; aliases `hdw` (watch) and `hsa` (all changes).
+  Use for: the review step of every loop — the leverage against review bandwidth.
 
 ## Wisdom (Communities)
 - [opencode Discord](https://opencode.ai/discord)
@@ -74,4 +78,5 @@ installed versions before teaching them.
 - No high-quality primary source yet on **herdr-specific orchestration patterns** — it is
   young. Derive from its docs + local experimentation and record what works in learning records.
 - No trusted source on **review technique itself** (reading agent diffs fast without
-  rubber-stamping). Research specifically if lesson 4 needs it.
+  rubber-stamping). Partially addressed: `hunk --agent-context` (agent rationale sidecars) is a
+  technique lead; research properly when a lesson needs review craft.

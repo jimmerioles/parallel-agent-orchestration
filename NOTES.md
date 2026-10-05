@@ -25,6 +25,10 @@ learning evidence lives in `learning-records/`.
   Detach: `prefix d`. Help: `prefix ?`. Config mirrors Omarchy tmux bindings.
 - Agent CLIs installed: opencode, claude, codex, gemini, crush, copilot, cursor-agent, grok,
   hermes, muse, omp, pi. Omarchy aliases: `c` = `opencode --auto`; `cx` = claude auto.
+- **hunk 0.23.0** — Omarchy 4 default terminal diff viewer, explicitly built for agent-authored
+  changesets (`--agent-context` JSON rationale sidecar). Aliases: `hdw` = `hunk diff --watch`,
+  `hsa` = diff vs empty tree. Integrated into Lesson 0003 review step + control-room card
+  (2026-10-05, prompted by the user — a review-tool lesson of its own may be warranted later).
 - Omarchy 4.0.0.alpha (quattro) with tmux 3.7c + shell functions (`tdl`, `tds`, `tslm`, `tsl`,
   `ga`, `gd`) — fallback control room if herdr is unavailable.
 - Repo: this worktree is branch `dsv41fmax`; main checkout at `~/Work/parallel-agent-orchestration`

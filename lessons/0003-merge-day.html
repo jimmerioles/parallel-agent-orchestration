@@ -65,11 +65,12 @@
         <p><strong>Review and commit in <code>worker-a</code>:</strong></p>
         <div class="brief" id="accept-a">git status --short
 git add sandbox/shared/notes.md
-git diff --cached
+hunk diff --staged
 git commit -m "notes: accept worker a"<button class="copy-btn" data-copy="#accept-a">Copy</button></div>
-        <p class="step-hint"><code>status</code> shows the new file; <code>diff --cached</code>
-        shows exactly what you’re accepting (the whole file — it’s new); the commit records it
-        on the <code>worker-a</code> branch.</p>
+        <p class="step-hint"><code>status</code> shows the new file; <code>hunk diff --staged</code>
+        opens Omarchy’s diff viewer on exactly what you’re accepting — built for agent-authored
+        changesets, so this is the review seat the whole course has been aiming at. Quit the
+        viewer when satisfied, then commit. Plain-text fallback: <code>git diff --cached</code>.</p>
       </span>
     </li>
 
@@ -79,11 +80,20 @@ git commit -m "notes: accept worker a"<button class="copy-btn" data-copy="#accep
         commands with the other message:</p>
         <div class="brief" id="accept-b">git status --short
 git add sandbox/shared/notes.md
-git diff --cached
+hunk diff --staged
 git commit -m "notes: accept worker b"<button class="copy-btn" data-copy="#accept-b">Copy</button></div>
       </span>
     </li>
   </ol>
+
+  <div class="note">
+    <span class="label">The review seat</span>
+    <p>Lesson 0001’s law: agents scale, review doesn’t. <code>hunk</code> is this machine’s
+    answer — a terminal diff viewer designed for <em>agent-authored changesets</em>. Omarchy
+    also gives you two aliases: <code>hdw</code> (<code>hunk diff --watch</code>, live review
+    while agents still work) and <code>hsa</code> (diff against the empty tree — every change
+    in the repo at once).</p>
+  </div>
 
   <h2>Part 2 · Merge, one at a time</h2>
 
@@ -95,8 +105,11 @@ git commit -m "notes: accept worker b"<button class="copy-btn" data-copy="#accep
       <span class="step-body">
         <p><strong>Remove the collision artifact, then merge the first worker:</strong></p>
         <div class="brief" id="merge-a">rm -rf sandbox/shared
-git status --short
+hunk diff dsv41fmax worker-a
 git merge worker-a<button class="copy-btn" data-copy="#merge-a">Copy</button></div>
+        <p>The middle command is the habit that makes merges safe: <strong>review the branch
+        against its base before integrating it</strong> — a branch is just a diff you haven’t
+        accepted yet.</p>
         <p>This one is easy: <code>worker-a</code>’s commit sits directly on top of your branch,
         so git just moves the pointer — a <strong>fast-forward</strong>.</p>
         <p class="step-hint">Sidenote worth knowing: if you skip the <code>rm</code>, git refuses

@@ -85,6 +85,18 @@
     and <strong>low-stakes</strong>. Fix whichever leg is missing before adding agents.</p>
   </div>
 
+  <h2>Review with hunk</h2>
+  <table>
+    <tr><th>Command</th><th>Reviews</th></tr>
+    <tr><td><code>hunk diff</code></td><td>Uncommitted changes in the working tree</td></tr>
+    <tr><td><code>hunk diff --staged</code></td><td>Exactly what you’re about to commit</td></tr>
+    <tr><td><code>hunk diff &lt;base&gt; &lt;branch&gt;</code></td><td>Everything a branch adds — review before merging</td></tr>
+    <tr><td><code>hunk show</code> · <code>hunk log</code></td><td>Last commit · repository history</td></tr>
+  </table>
+  <p class="sidenote">Aliases: <code>hdw</code> = <code>hunk diff --watch</code> (live review
+  while agents work); <code>hsa</code> = diff against the empty tree (every change). Built for
+  agent-authored changesets; <code>--agent-context</code> reads a JSON rationale sidecar.</p>
+
   <h2>When something looks wrong</h2>
   <ul class="compact">
     <li>Agent state wrong? <code>herdr agent list</code>, then <code>herdr agent explain &lt;target&gt;</code>.</li>
