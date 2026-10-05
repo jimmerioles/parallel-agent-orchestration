@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>herdr Control-Room Card — Reference</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0001-make-it-two.html">← Lesson 0001</a></span>
+    <span>Reference card · print me</span>
+  </nav>
+
+  <p class="kicker">Reference · Parallel Agent Orchestration</p>
+  <h1>The herdr Control-Room Card</h1>
+  <p class="subtitle">Run a fleet of coding agents from one screen. Verified against
+  <code>herdr 0.8.2</code> and your config on 2026-10-05.</p>
+
+  <h2>Concept model</h2>
+  <table>
+    <tr><th>Layer</th><th>What it is</th><th>Use it for</th></tr>
+    <tr><td><b>Session</b></td><td>Persistent background server owning the terminals.</td><td>You need exactly one. It survives closing the window.</td></tr>
+    <tr><td><b>Workspace</b></td><td>Project-level container; agent state rolls up here.</td><td>One per repo or investigation.</td></tr>
+    <tr><td><b>Tab</b></td><td>A layout of panes inside a workspace.</td><td>Separate views: agents · review · logs.</td></tr>
+    <tr><td><b>Pane</b></td><td>A real terminal, splittable and persistent.</td><td>One agent per pane = one visible worker.</td></tr>
+    <tr><td><b>Agent</b></td><td>A coding CLI herdr recognizes in a pane.</td><td>Its state appears in the sidebar automatically.</td></tr>
+  </table>
+
+  <h2>Agent states: the sidebar is your review queue</h2>
+  <table>
+    <tr><th>State</th><th>Meaning</th><th>Your move</th></tr>
+    <tr><td><code>working</code></td><td>Actively running.</td><td>Leave it alone; review something else.</td></tr>
+    <tr><td><code>blocked</code></td><td>Waiting on you (approval, question).</td><td>Jump to it now — it’s burning time.</td></tr>
+    <tr><td><code>idle</code></td><td>Finished its turn, nothing running.</td><td>Review its output, or give the next brief.</td></tr>
+    <tr><td><code>done</code></td><td>Completed and not yet viewed (rollup).</td><td>Open the pane; the flag clears.</td></tr>
+  </table>
+  <p class="sidenote">The sidebar rolls state up: a blocked agent marks its tab and workspace
+  blocked. Scan the workspace names first, panes second.</p>
+
+  <h2>Your keys (prefix = <kbd>ctrl</kbd>+<kbd>space</kbd>)</h2>
+  <div class="ref-grid">
+    <div>
+      <h3>Panes</h3>
+      <ul class="compact">
+        <li>Split right: <kbd>prefix</kbd> <kbd>v</kbd> · <kbd>alt</kbd>+<kbd>shift</kbd>+<kbd>enter</kbd></li>
+        <li>Split down: <kbd>prefix</kbd> <kbd>h</kbd> · <kbd>alt</kbd>+<kbd>enter</kbd></li>
+        <li>Focus: <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>arrows</kbd></li>
+        <li>Resize: <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>shift</kbd>+<kbd>arrows</kbd></li>
+        <li>Zoom / unzoom: <kbd>prefix</kbd> <kbd>z</kbd></li>
+        <li>Close pane: <kbd>prefix</kbd> <kbd>x</kbd> · <kbd>alt</kbd>+<kbd>esc</kbd></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Everything else</h3>
+      <ul class="compact">
+        <li>New tab: <kbd>prefix</kbd> <kbd>c</kbd> · switch: <kbd>alt</kbd>+<kbd>1..9</kbd></li>
+        <li>Next / prev workspace: <kbd>alt</kbd>+<kbd>↓</kbd> / <kbd>alt</kbd>+<kbd>↑</kbd></li>
+        <li>Detach (everything keeps running): <kbd>prefix</kbd> <kbd>d</kbd></li>
+        <li>Live binding list: <kbd>prefix</kbd> <kbd>?</kbd></li>
+        <li>Reload config: <kbd>prefix</kbd> <kbd>q</kbd></li>
+      </ul>
+    </div>
+  </div>
+  <p class="sidenote">Mouse works too: click to focus, drag borders to resize, right-click for
+  menus. Keybindings mirror the Omarchy tmux config on purpose — one muscle memory, two tools.</p>
+
+  <h2>The loop</h2>
+  <table>
+    <tr><th>Step</th><th>You do</th><th>Prove it</th></tr>
+    <tr><td>1 · Brief</td><td>Write a task with acceptance criteria and the verification command.</td><td>“Done” has a definition.</td></tr>
+    <tr><td>2 · Delegate</td><td>One pane, one agent, one brief. Launch all, then step back.</td><td>Sidebar shows <code>working</code>.</td></tr>
+    <tr><td>3 · Work</td><td>Do your own work. Do not spectate.</td><td>—</td></tr>
+    <tr><td>4 · Review</td><td>Read the diff, run the verification, check side effects.</td><td>The command passes; nothing else changed.</td></tr>
+    <tr><td>5 · Accept</td><td>Merge / keep / discard. Clear the pane for the next brief.</td><td>Review queue empty.</td></tr>
+  </table>
+
+  <div class="rulebox">
+    <span class="label">The Rule</span>
+    <p>Parallelize a task only when it is <strong>independent</strong> (no shared files or
+    interfaces in flux), <strong>precisely specified</strong>, <strong>machine-verifiable</strong>,
+    and <strong>low-stakes</strong>. Fix whichever leg is missing before adding agents.</p>
+  </div>
+
+  <h2>When something looks wrong</h2>
+  <ul class="compact">
+    <li>Agent state wrong? <code>herdr agent list</code>, then <code>herdr agent explain &lt;target&gt;</code>.</li>
+    <li>Keybinding does nothing? The terminal or Hyprland ate the chord — check <kbd>prefix</kbd> <kbd>?</kbd> and <code>herdr.dev/docs/keyboard/</code>.</li>
+    <li>Server weirdness? <code>herdr status</code>; logs live in <code>~/.config/herdr/</code>.</li>
+    <li>Docs drift: verify against <code>herdr --version</code> — this card is v0.8.2-era.</li>
+  </ul>
+
+  <div class="footer">
+    <p>Sources: <a href="https://herdr.dev/docs/concepts/">herdr concepts</a> ·
+    <a href="https://herdr.dev/docs/agents/">agents</a> ·
+    <a href="https://herdr.dev/docs/keyboard/">keyboard</a> ·
+    <a href="https://herdr.dev/agent-guide.md">agent guide</a>.
+    Companion: <a href="../lessons/0001-make-it-two.html">Lesson 0001 — Make It Two</a>.</p>
+  </div>
+
+</div>
+</body>
+</html>

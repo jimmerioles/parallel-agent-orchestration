@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 0001 — Make It Two</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+<style>
+  /* One-off layout diagram for this lesson; promote to assets if reused. */
+  .layout-map {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 6px;
+    max-width: 440px;
+    margin: 1.4rem auto;
+    font-family: ui-sans-serif, system-ui, "DejaVu Sans", sans-serif;
+    font-size: 0.78rem;
+  }
+  .layout-map .cell {
+    border: 1.5px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.7rem 0.6rem;
+    text-align: center;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+  }
+  .layout-map .teacher { grid-row: 1 / 3; border-color: var(--accent); color: var(--accent); }
+  .layout-map .worker { border-color: var(--good); color: var(--good); }
+  .layout-map .cell b { font-size: 0.82rem; }
+  .layout-map .cell span { font-size: 0.7rem; opacity: 0.8; }
+  .loop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 1.2rem 0;
+    font-family: ui-sans-serif, system-ui, "DejaVu Sans", sans-serif;
+    font-size: 0.8rem;
+  }
+  .loop .node {
+    border: 1.5px solid var(--accent);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    color: var(--accent);
+  }
+  .loop .node.you { border-color: var(--ink); color: var(--ink); }
+  .loop .node.agents { border-color: var(--good); color: var(--good); }
+  .loop .arrow { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span>Parallel Agent Orchestration · Lesson 0001</span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Lesson 0001 · ~10 minutes · hands-on</p>
+  <h1>Make It Two</h1>
+  <p class="subtitle">From one agent to a fleet of two — the atom every larger setup repeats.</p>
+
+  <h2>The one idea</h2>
+
+  <p>Software engineering is shifting from <em>AI-assisted coding</em> to <strong>agentic software
+  engineering</strong>: instead of autocompleting lines, you state intent and AI teammates
+  execute whole tasks — and your job becomes commanding, specifying, and verifying
+  (<a href="https://arxiv.org/abs/2410.06107">Hassan et al., “Towards AI-Native SE (SE 3.0),” 2024</a>;
+  <a href="https://arxiv.org/abs/2509.06216">Hassan et al., SASE framework, 2025</a>).
+  The academic name for the screen you’re about to build is an <em>Agent Command Environment</em>:
+  “a command center where humans orchestrate, mentor, and oversee agent teams.”</p>
+
+  <p>Here’s the catch. Agents scale — your attention doesn’t. Every result still has to pass
+  through one human:</p>
+
+  <div class="rulebox">
+    <span class="label">The law of the lifestyle</span>
+    <p>“AI-generated code needs to be reviewed, which means the natural bottleneck on all of
+    this is how fast I can review the results.”
+    <br>— Simon Willison, <a href="https://simonwillison.net/2025/Oct/5/parallel-coding-agents/">“Embracing the parallel coding agent lifestyle,” Oct 2025</a></p>
+  </div>
+
+  <p>So parallelism only pays when the work is small, independent, and easy to check. That’s
+  what today’s two-agent run is designed to prove — and next lesson, you’ll see exactly what
+  happens when work is <em>not</em> independent.</p>
+
+  <h2>Your control room: herdr</h2>
+
+  <p>You’re already inside <a href="https://herdr.dev/docs/concepts/">herdr</a> — the persistent
+  terminal workspace manager installed on this machine. Four words cover everything you need today:</p>
+
+  <ul>
+    <li><strong>Workspace</strong> — one per project. This conversation lives in one.</li>
+    <li><strong>Tab</strong> — a layout of panes. You have one tab.</li>
+    <li><strong>Pane</strong> — a real terminal, running an app (right now: opencode, your teacher).</li>
+    <li><strong>Agent</strong> — a coding CLI herdr recognizes in a pane, with a live state.</li>
+  </ul>
+
+  <p>The left <strong>sidebar</strong> is your command screen; herdr calls this “the main
+  Herdr workflow”:</p>
+
+  <p class="sidenote">opencode reports its own state to herdr natively — no extra setup. Claude,
+  codex, and gemini also work; we start with opencode to keep variables low.</p>
+
+  <div class="note">
+    <span class="label">From the herdr docs</span>
+    <p>“Start several agents, let them work in parallel, and use the sidebar to see which
+    project needs a decision, which one is still running, and which one is ready to review.”
+    (<a href="https://herdr.dev/docs/agents/">herdr.dev/docs/agents</a>)</p>
+  </div>
+
+  <p>Agent states you’ll meet today: <code>working</code> (leave it alone) and <code>idle</code>
+  (your turn to review). Later: <code>blocked</code> — the agent needs you. The sidebar is a
+  review queue, not a progress bar.</p>
+
+  <h2>The win: run two agents at once</h2>
+
+  <p>Target layout — your teacher keeps the left pane; two workers take the right:</p>
+
+  <div class="layout-map">
+    <div class="cell teacher"><b>You + teacher</b><span>pane 1 (this opencode)</span></div>
+    <div class="cell worker"><b>Worker A</b><span>new opencode</span></div>
+    <div class="cell worker"><b>Worker B</b><span>new opencode</span></div>
+  </div>
+
+  <p>Do the steps in order. Click each number when you finish it (they remember).</p>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Switch to the herdr window</strong> — the terminal where this conversation lives.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Split the pane to the right.</strong> Press <kbd>ctrl</kbd>+<kbd>space</kbd>,
+        release, then press <kbd>v</kbd>. (Mouse alternative: right-click a pane → split right.
+        Your config also binds <kbd>alt</kbd>+<kbd>shift</kbd>+<kbd>enter</kbd>.)</p>
+        <p class="step-hint">Result: two side-by-side panes. A new one opens in the same folder,
+        with a shell prompt.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Start Worker A.</strong> In the new pane type <kbd>c</kbd> and press Enter.
+        <code>c</code> is Omarchy’s alias for <code>opencode --auto</code> — auto-approves tool
+        use. Fine for this sandbox; on real code, permissions exist for a reason.</p>
+        <p class="step-hint">Wait for the opencode TUI to appear. The sidebar should now list a
+        second agent.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Paste Worker A’s brief</strong> into that agent and press Enter:</p>
+        <div class="brief" id="brief-a">Create the file sandbox/hello/a.md in this repo. Its content must be exactly: the heading "# Worker A", a blank line, then one sentence in your own words describing what AI coding agent you are and which model you run on. Create or modify no other file. When done, reply with the single word: done<button class="copy-btn" data-copy="#brief-a">Copy</button></div>
+        <p class="step-hint">Watch its sidebar state flip to <code>working</code>. Now walk away
+        from it — that’s the whole point.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Split again and start Worker B.</strong> Right-click the <em>right-hand</em> pane
+        (or press <kbd>ctrl</kbd>+<kbd>space</kbd> then <kbd>h</kbd>) to split it downward.
+        In the new pane run <kbd>c</kbd>, then paste Worker B’s brief:</p>
+        <div class="brief" id="brief-b">Create the file sandbox/hello/b.md in this repo. Its content must be exactly: the heading "# Worker B", a blank line, then one sentence in your own words describing what AI coding agent you are and which model you run on. Create or modify no other file. When done, reply with the single word: done<button class="copy-btn" data-copy="#brief-b">Copy</button></div>
+        <p class="step-hint">Two agents, working at the same time, in the same checkout — and you
+        haven’t written a line.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Wait for both to go idle.</strong> Glance at the sidebar only. Do not sit and
+        watch either agent — if you catch yourself spectating, that’s a habit to break.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Review both results.</strong> In any pane, run:</p>
+        <div class="brief" id="cmd-1">ls sandbox/hello/ && git status --short<button class="copy-btn" data-copy="#cmd-1">Copy</button></div>
+        <p>Open both files (your editor is one keystroke away:
+        <kbd>super</kbd>+<kbd>return</kbd>). Check each against its brief: right heading, one
+        sentence, nothing else touched. <em>This is the review step — the reason the whole
+        exercise exists.</em></p>
+        <p class="step-hint">Heads-up: <code>git status</code> will also list this course’s own
+        files as new — expected. What matters is that <code>sandbox/hello/</code> contains
+        exactly two files, each matching its brief.</p>
+      </span>
+    </li>
+  </ol>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p><code>sandbox/hello/a.md</code> and <code>sandbox/hello/b.md</code> both exist, each
+    matching its brief, and you watched both agents’ states change in the sidebar without
+    babysitting either terminal.</p>
+  </div>
+
+  <h2>What just happened</h2>
+
+  <p>You ran the atom of every orchestration setup — bigger fleets are just this loop with
+  more workers and better plumbing:</p>
+
+  <div class="loop">
+    <span class="node you">brief</span><span class="arrow">→</span>
+    <span class="node you">delegate</span><span class="arrow">→</span>
+    <span class="node agents">agents run in parallel</span><span class="arrow">→</span>
+    <span class="node you">review &amp; accept</span>
+  </div>
+
+  <p>Two things made today safe. The tasks were <strong>independent</strong> (different files —
+  no collisions) and <strong>trivially verifiable</strong> (you know exactly what correct looks
+  like). That gives us the heuristic this course builds on:</p>
+
+  <div class="rulebox">
+    <span class="label">The Rule</span>
+    <p>Hand work to a parallel agent only when it is <strong>independent</strong>,
+    <strong>precisely specified</strong>, <strong>machine-verifiable</strong>, and
+    <strong>low-stakes</strong>. Otherwise, fix one of those four first — next lesson does
+    exactly that for independence.</p>
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <p>Retrieval beats rereading. Answer from memory:</p>
+
+  <div class="quiz">
+    <p class="q">What is the binding constraint on how much parallel agent work can land?</p>
+    <div class="options">
+      <button class="option">Your context window</button>
+      <button class="option" data-correct="true">Your review bandwidth</button>
+      <button class="option">Your CPU core count</button>
+      <button class="option">Your token budget</button>
+    </div>
+    <p class="explain">Agents scale almost free; every result still passes through one human’s
+    review. Parallelism is only worth it when each result is cheap to check
+    (<a href="https://simonwillison.net/2025/Oct/5/parallel-coding-agents/">Willison</a>).</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">In herdr, what does the sidebar’s agent state tell you?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Which agents need attention</button>
+      <button class="option">Which agent costs the most</button>
+      <button class="option">Which model is performing best</button>
+      <button class="option">Which branch is currently dirty</button>
+    </div>
+    <p class="explain"><code>working</code> = leave it; <code>idle</code>/<code>done</code> =
+    ready to review; <code>blocked</code> = it needs you. It’s a review queue, not a progress
+    bar (<a href="https://herdr.dev/docs/agents/">herdr docs</a>).</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">When should you hand a task to a parallel agent?</p>
+    <div class="options">
+      <button class="option">When it is long, complex, important</button>
+      <button class="option">When it is fun, novel, interesting</button>
+      <button class="option" data-correct="true">When it is independent, specified, verifiable</button>
+      <button class="option">When it is risky, central, urgent</button>
+    </div>
+    <p class="explain">Coupled, fuzzy, or hard-to-check work multiplies your review burden
+    instead of your output. Fix independence and verification first; then parallelize.</p>
+  </div>
+
+  <h2>Before next time</h2>
+
+  <p><strong>Primary source (10 minutes):</strong> read Simon Willison’s
+  <a href="https://simonwillison.net/2025/Oct/5/parallel-coding-agents/">“Embracing the parallel
+  coding agent lifestyle.”</a> It is the clearest honest account of what does and doesn’t
+  parallelize — you’ll recognize today’s exercise in his “carefully specified” category.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>Anything unclear — or anything you want to go deeper on — ask the agent in the left pane.
+    That’s what I’m for. If a step failed or a state looked wrong, tell me what you saw; herdr
+    has a diagnosis command for every misbehaving piece.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>Next lesson: <em>Two Agents, One File</em> — the collision problem, and git worktrees as
+    the fix. <span class="no-print">(Ask when you’ve completed today’s run.)</span></p>
+  </div>
+
+</div>
+</body>
+</html>
