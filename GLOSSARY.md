@@ -72,3 +72,10 @@ lost update.
 _Avoid_: “merge error”, “git broke”
 _Source_: [Pro Git §3.2](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)
 _Taught_: [Lesson 0003](lessons/0003-merge-day.html)
+
+**Brief (task brief)**:
+The written spec handed to a worker before it starts: Goal · Deliverable · Constraints ·
+Verification · Report. The unit of delegation; its precision sets the cost of review.
+_Avoid_: prompt, instruction, task description
+_Source_: [Willison, 2025](https://simonwillison.net/2025/Oct/5/parallel-coding-agents/); [Anthropic best practices](https://www.anthropic.com/engineering/claude-code-best-practices)
+_Taught_: [Lesson 0004](lessons/0004-the-brief.html)

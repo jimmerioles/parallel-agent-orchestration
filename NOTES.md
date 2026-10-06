@@ -40,18 +40,24 @@ learning evidence lives in `learning-records/`.
   Lesson 0002 uses the workaround.
 - Openers available: `xdg-open`, `omarchy-launch-browser`. Screenshot QA: `chromium --headless`.
 
-## Course sketch (working — revise as learning records accumulate)
-1. ✅ built & completed — *Make It Two*: two opencode workers, independent files, sidebar states, review.
-2. ✅ built & completed — *Two Agents, One File*: deliberate lost update, then worktree isolation (worker-a / worker-b).
-3. ✅ built — *Merge Day*: accept each branch, fast-forward + add/add conflict, resolve by hand, retire worktrees.
-4. *The Brief*: specification + verification so done is provable before agents start.
-5. *The Fleet*: 3–5 agents, WIP limits, blocked-state triage.
-6. *Agent-Driven Orchestration*: `herdr` CLI/socket from an orchestrator agent; opencode subagents.
-7. *SE 3.0 in Practice*: ACE/AEE framing, harness engineering, what stays human.
+## Course roadmap (working — revise as learning records accumulate)
+1. ✅ completed — *Make It Two*: two opencode workers, independent files, sidebar states, review.
+2. ✅ completed — *Two Agents, One File*: deliberate lost update, then worktree isolation.
+3. ✅ completed — *Merge Day*: accept each branch, conflict resolved by hand, worktrees retired; hunk used for both reviews.
+4. ✅ built — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; teacher critiques the draft before it reaches a worker.
+5. *The Fleet*: 3–5 agents, WIP limits, blocked-state triage, shared task state.
+6. *Review craft*: hunk deep dive, `--agent-context` rationale sidecars, review technique.
+7. *Agent-driven orchestration*: an orchestrator agent driving workers via herdr CLI/socket; opencode subagents.
+8. *SE 3.0 in practice*: ACE/AEE framing, harness engineering (AGENTS.md), what stays human.
 
 ## Teaching conventions
 - Quiz options matched in word count; immediate feedback; retrieval from memory.
 - Every lesson: one primary source, one review step, reminder to ask follow-ups.
 - Keep the vocabulary: GLOSSARY.md terms only, once taught.
 - **Git convention:** committing agent output IS the “accept” step of the orchestration loop
-  (done for lesson 0001: `7a442cf`). Course material is committed as separate milestones.
+  (lesson 0001: `7a442cf`). Course material is committed as separate milestones.
+- **Freeze the course branch during exercises:** do NOT commit to `dsv41fmax` while a lesson is
+  in flight — lesson 0003’s predicted fast-forward became a merge commit because of a mid-lesson
+  course commit. If a fix is needed mid-lesson, warn the learner first.
+- The teacher-as-critic loop (learner drafts, teacher critiques before the worker sees it) is a
+  strong tight feedback loop — used in *The Brief*, worth reusing.

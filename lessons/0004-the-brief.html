@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 0004 — The Brief</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+<style>
+  /* One-off for this lesson: bad/good brief contrast */
+  .contrast {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.4rem 0;
+  }
+  @media (max-width: 640px) { .contrast { grid-template-columns: 1fr; } }
+  .contrast .box {
+    border: 1.5px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    font-size: 0.85rem;
+  }
+  .contrast .bad { border-color: var(--bad); }
+  .contrast .good { border-color: var(--good); }
+  .contrast h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .contrast .bad h3 { color: var(--bad); }
+  .contrast .good h3 { color: var(--good); }
+  .contrast p { margin: 0.3rem 0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0003-merge-day.html">← Lesson 0003</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Lesson 0004 · ~15 minutes · hands-on</p>
+  <h1>The Brief</h1>
+  <p class="subtitle">Write the spec; the review becomes cheap. Delegation is a writing skill.</p>
+
+  <h2>The one idea</h2>
+
+  <p>Every lesson so far, the briefs were handed to you. From here on, <em>you</em> write them —
+  because the brief is where the cost of review is decided. Simon Willison’s rule of thumb:
+  code that “started from your own specification is a lot less effort to review,” while code
+  that lands out of nowhere forces you to reverse-engineer its goals before you can judge it
+  (<a href="https://simonwillison.net/2025/Oct/5/parallel-coding-agents/">Willison, 2025</a>).
+  Anthropic says the same thing from the other side: scope the task tightly and give the agent
+  a way to verify its own work (<a href="https://www.anthropic.com/engineering/claude-code-best-practices">Claude
+  Code best practices</a>).</p>
+
+  <p>This is the two hardest legs of <a href="../GLOSSARY.md">The Rule</a> — <strong>precisely
+  specified</strong> and <strong>machine-verifiable</strong> — turned into a document you write
+  <em>before</em> any agent starts. A brief is not a wish. It is a contract with a test.</p>
+
+  <h2>Anatomy of a brief</h2>
+
+  <table>
+    <tr><th>Part</th><th>Answers</th><th>Example fragment</th></tr>
+    <tr><td><b>Goal</b></td><td>What and why, in one sentence</td><td>“Give the manager a one-glance checkout state.”</td></tr>
+    <tr><td><b>Deliverable</b></td><td>Exact paths, exact format</td><td>“Create <code>sandbox/tools/repo-state.sh</code>; two lines of output.”</td></tr>
+    <tr><td><b>Constraints</b></td><td>What not to touch; tools allowed</td><td>“Only <code>git</code> and coreutils; no other file changed.”</td></tr>
+    <tr><td><b>Verification</b></td><td>The command that proves done</td><td>“<code>bash sandbox/tools/repo-state.sh</code> prints the branch, then <code>clean</code>.”</td></tr>
+    <tr><td><b>Report</b></td><td>What to say back</td><td>“Reply with the command output, nothing else.”</td></tr>
+  </table>
+
+  <p class="sidenote">Keep it short. A good brief is usually five to eight lines. Length is not
+  rigour — an explicit acceptance test is.</p>
+
+  <h2>Bad brief, good brief</h2>
+
+  <p>Same task, two briefs. The difference is not politeness — it is whether “done” can be
+  checked by a machine or only argued about by a human.</p>
+
+  <div class="contrast">
+    <div class="box bad">
+      <h3>Vague — unverifiable</h3>
+      <p>“Improve the repo tooling. Make the scripts cleaner and more useful, and tidy up the
+      docs. Use your best judgement.”</p>
+      <p><em>No deliverable. No boundary. No test. You will review by vibes and pay full price.</em></p>
+    </div>
+    <div class="box good">
+      <h3>Precise — verifiable</h3>
+      <p>“Create <code>sandbox/tools/repo-state.sh</code>. It prints the current branch on line
+      one and <code>clean</code> or <code>dirty</code> on line two, using only git and
+      coreutils. Change no other file. Verify: <code>bash sandbox/tools/repo-state.sh</code>
+      prints <code>dsv41fmax</code> then <code>clean</code>; after <code>touch
+      sandbox/scratch</code> it prints <code>dirty</code>. Reply with that output.”</p>
+      <p><em>One deliverable. One boundary. One test you can run in five seconds.</em></p>
+    </div>
+  </div>
+
+  <h2>Red flags</h2>
+  <ul>
+    <li><strong>Vague verbs:</strong> “improve”, “clean up”, “make nicer”, “refactor” — with no
+    acceptance test attached.</li>
+    <li><strong>No verification:</strong> if you can’t name the command that fails before and
+    passes after, you are about to review vibes.</li>
+    <li><strong>Open scope:</strong> “and anything else you notice.” Every extra noun is review
+    debt you just bought.</li>
+    <li><strong>Multiple deliverables:</strong> one brief, one branch, one reviewable change.</li>
+    <li><strong>Missing boundaries:</strong> no list of files that must stay untouched.</li>
+  </ul>
+
+  <h2>Your turn: write a real brief</h2>
+
+  <p>Here is the <strong>goal</strong> — you write the rest. Then you’ll run it past your
+  teacher <em>before</em> spending an agent on it. That critique step is the feedback loop for
+  this lesson.</p>
+
+  <div class="note">
+    <span class="label">Goal (given)</span>
+    <p>Make this sandbox a little more fleet-friendly: a script a manager can run inside any
+    checkout to see, at a glance, what state it is in. Target path:
+    <code>sandbox/tools/repo-state.sh</code>. <em>You</em> decide the exact output format,
+    behaviour, constraints, and — most importantly — the verification commands.</p>
+  </div>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Draft your brief.</strong> Fill every field; don’t send it yet. Use this
+        skeleton (or your own):</p>
+        <div class="brief" id="skeleton">Goal: &lt;one sentence: what and why&gt;
+Deliverable: sandbox/tools/repo-state.sh — &lt;exact behaviour and output format&gt;
+Constraints: &lt;files not to touch; tools allowed; nothing else changed&gt;
+Verification: &lt;exact command(s) and expected output — the definition of done&gt;
+Report: &lt;what the worker should reply&gt;<button class="copy-btn" data-copy="#skeleton">Copy</button></div>
+        <p class="step-hint">Test yourself before the teacher does: run your verification
+        commands mentally. Do they actually prove the deliverable? Would they pass on a broken
+        script?</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Get it critiqued.</strong> Paste your draft into the teacher pane and ask:
+        <em>“Critique this brief against the five parts and the verification test.”</em></p>
+        <p class="step-hint">Expect feedback like “your test passes even when the script is
+        empty” or “this field is a goal, not a deliverable.” Revise until the teacher says it is
+        runnable as-is.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Send it to a worker.</strong> Reuse a worker pane from Lesson 0001 (both are
+        still open in this workspace). Paste the revised brief, press Enter, wait for
+        <code>idle</code>.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Run your own verification — as written.</strong> In your shell tab, run the
+        exact commands from your brief’s Verification section. Then the “before” state too, if
+        your test needs it.</p>
+        <p class="step-hint">A failed verification is not a failed lesson — it is information.
+        Send the failure back to the same worker (“your output was X, expected Y”) and let it
+        iterate. That loop <em>is</em> the job.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Accept it.</strong> Review the diff with hunk, then commit:</p>
+        <div class="brief" id="accept">git add sandbox/tools/repo-state.sh
+hunk diff --staged
+git commit -m "feat: add repo-state tool"<button class="copy-btn" data-copy="#accept">Copy</button></div>
+        <p class="step-hint">You specified it, an agent built it, a command proved it. That is
+        the whole loop — now with <em>your</em> brief at the front.</p>
+      </span>
+    </li>
+  </ol>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p>Your verification commands pass against the committed
+    <code>sandbox/tools/repo-state.sh</code>, and the brief you sent would let a stranger
+    reproduce that result without asking you a single question.</p>
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz">
+    <p class="q">What makes “done” provable in a brief?</p>
+    <div class="options">
+      <button class="option" data-correct="true">A verification command included</button>
+      <button class="option">A confident closing sentence</button>
+      <button class="option">A long detailed description</button>
+      <button class="option">A generous token budget</button>
+    </div>
+    <p class="explain">If you can’t name a command that fails before and passes after, you’re
+    about to review vibes. The test is the definition of done.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Which of these is a red flag in a brief?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Improve the code quality somehow</button>
+      <button class="option">Create this file with exact contents</button>
+      <button class="option">Run this command to verify it</button>
+      <button class="option">Do not touch any other files</button>
+    </div>
+    <p class="explain">Vague verbs with no acceptance test are unreviewable. The other three are
+    exactly what a good brief contains.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What belongs in the Constraints section?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Files you must not touch</button>
+      <button class="option">The final commit message text</button>
+      <button class="option">The model the worker should use</button>
+      <button class="option">Your review bandwidth estimate</button>
+    </div>
+    <p class="explain">Constraints are boundaries: what stays untouched, which tools are allowed,
+    and what “nothing else changed” means for this task.</p>
+  </div>
+
+  <h2>Before next time</h2>
+
+  <p><strong>Primary source (15 minutes):</strong>
+  <a href="https://www.anthropic.com/engineering/claude-code-best-practices">Anthropic — Claude
+  Code best practices</a>. Read it for the sections on task scoping, giving agents verification
+  loops, and context discipline — they translate directly to any agent you run.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>Bring me your draft brief — that critique is the point of this lesson, not an optional
+    extra. I’ll tell you which field is weakest and how a worker would misread it.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>Next lesson: <em>The Fleet</em> — three to five agents, work-in-progress limits, and
+    triaging the ones that go <code>blocked</code>.</p>
+  </div>
+
+</div>
+</body>
+</html>
