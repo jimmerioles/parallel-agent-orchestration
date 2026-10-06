@@ -79,3 +79,17 @@ Verification · Report. The unit of delegation; its precision sets the cost of r
 _Avoid_: prompt, instruction, task description
 _Source_: [Willison, 2025](https://simonwillison.net/2025/Oct/5/parallel-coding-agents/); [Anthropic best practices](https://www.anthropic.com/engineering/claude-code-best-practices)
 _Taught_: [Lesson 0004](lessons/0004-the-brief.html)
+
+**WIP limit**:
+The cap on how many parallel agents you keep in flight at once, set by your review bandwidth —
+not by your hardware. Start at three.
+_Avoid_: “max agents”, “capacity”
+_Source_: [Orosz, 2025](https://blog.pragmaticengineer.com/new-trend-programming-by-kicking-off-parallel-ai-agents/)
+_Taught_: [Lesson 0005](lessons/0005-the-fleet.html)
+
+**Triage (fleet)**:
+Ordering your attention across the fleet: `blocked` agents first (they cannot progress without
+you), then `idle`/`done` for review, and `working` last (leave them alone).
+_Avoid_: “checking on agents”
+_Source_: herdr agent-state model
+_Taught_: [Lesson 0005](lessons/0005-the-fleet.html)

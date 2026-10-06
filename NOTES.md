@@ -29,6 +29,12 @@ learning evidence lives in `learning-records/`.
   changesets (`--agent-context` JSON rationale sidecar). Aliases: `hdw` = `hunk diff --watch`,
   `hsa` = diff vs empty tree. Integrated into Lesson 0003 review step + control-room card
   (2026-10-05, prompted by the user — a review-tool lesson of its own may be warranted later).
+- **Blocked drill (verified 2026-10-05):** opencode's herdr integration maps
+  `permission.asked` and `question.asked` → `blocked` (read the installed plugin at
+  `~/.config/opencode/plugins/herdr-agent-state.js`). opencode defaults are permissive, so plain
+  `opencode` only asks at guardrails — notably `external_directory` (paths outside cwd), which
+  defaults to `ask`. `--auto` (Omarchy alias `c`) suppresses those asks. Lesson 0005 engineers a
+  blocked agent by having a non-auto worker write outside its worktree.
 - Omarchy 4.0.0.alpha (quattro) with tmux 3.7c + shell functions (`tdl`, `tds`, `tslm`, `tsl`,
   `ga`, `gd`) — fallback control room if herdr is unavailable.
 - Repo: this worktree is branch `dsv41fmax`; main checkout at `~/Work/parallel-agent-orchestration`
@@ -45,7 +51,7 @@ learning evidence lives in `learning-records/`.
 2. ✅ completed — *Two Agents, One File*: deliberate lost update, then worktree isolation.
 3. ✅ completed — *Merge Day*: accept each branch, conflict resolved by hand, worktrees retired; hunk used for both reviews.
 4. ✅ completed — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; user authored, teacher critiqued, worker executed, runbook verified. Sandbox now has `sandbox/tools/repo-state.sh` (reuse in #5).
-5. *The Fleet*: 3–5 agents, WIP limits, blocked-state triage, shared task state.
+5. ✅ built — *The Fleet*: 3 agents under a WIP limit, one engineered `blocked` rescue, sequential merge, retire.
 6. *Review craft*: hunk deep dive, `--agent-context` rationale sidecars, review technique.
 7. *Agent-driven orchestration*: an orchestrator agent driving workers via herdr CLI/socket; opencode subagents.
 8. *SE 3.0 in practice*: ACE/AEE framing, harness engineering (AGENTS.md), what stays human.

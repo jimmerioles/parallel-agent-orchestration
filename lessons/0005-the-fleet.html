@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 0005 — The Fleet</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+<style>
+  /* One-off for this lesson: fleet roster cards */
+  .fleet {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.7rem;
+    margin: 1.4rem 0;
+    font-family: ui-sans-serif, system-ui, "DejaVu Sans", sans-serif;
+    font-size: 0.75rem;
+  }
+  @media (max-width: 640px) { .fleet { grid-template-columns: 1fr; } }
+  .fleet .worker {
+    border: 1.5px solid var(--good);
+    border-radius: 6px;
+    padding: 0.7rem;
+    color: var(--muted);
+  }
+  .fleet .worker b { display: block; color: var(--good); font-size: 0.8rem; margin-bottom: 0.2rem; }
+  .fleet .worker .ask { color: var(--bad); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0004-the-brief.html">← Lesson 0004</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Lesson 0005 · ~20 minutes · hands-on</p>
+  <h1>The Fleet</h1>
+  <p class="subtitle">Three agents, one work-in-progress limit, and a blocked worker to rescue.</p>
+
+  <h2>The one idea</h2>
+
+  <p>You now have every part: briefs (Lesson 0004), isolation (0002), integration (0003). A
+  <strong>fleet</strong> is just those parts repeated — with one new discipline. The number of
+  agents you run is not set by your machine; it is set by <strong>your review bandwidth</strong>
+  (Lesson 0001’s law). Launch more than you can review and you are not managing a fleet, you are
+  accumulating inventory. So you set a <strong>WIP limit</strong> — work-in-progress limit — and
+  today it is <strong>three</strong>.</p>
+
+  <p class="sidenote">Gergely Orosz’s field reporting on parallel agents is blunt about the
+  ceiling: senior engineers benefit, but review fatigue is the real cap — most people top out
+  around a handful, not a swarm (<a href="https://blog.pragmaticengineer.com/new-trend-programming-by-kicking-off-parallel-ai-agents/">Pragmatic
+  Engineer, 2025</a>).</p>
+
+  <p>The second new skill is <strong>triage</strong>. Agents don’t just run and finish — they
+  can go <code>blocked</code>, waiting on you. Blocked agents cannot progress, so they jump the
+  queue: <strong>blocked first, then review what’s idle, leave the working ones alone</strong>.
+  You’ll engineer a blocked agent on purpose to practise the rescue.</p>
+
+  <div class="fleet">
+    <div class="worker"><b>Worker A · fleet-a</b>opencode in auto mode<br>builds <code>worktrees.sh</code></div>
+    <div class="worker"><b>Worker B · fleet-b</b>opencode in auto mode<br>builds <code>branches.sh</code></div>
+    <div class="worker"><b>Worker C · fleet-c</b>opencode, <span class="ask">no auto mode</span><br>builds <code>agents.sh</code> → <span class="ask">will block on an outside-repo write</span></div>
+  </div>
+
+  <h2>Part 1 · Provision three worktrees</h2>
+
+  <p>One task, one branch, one worktree, one agent. From your shell tab in this workspace
+  (the `--cwd` workaround again, since herdr starts worktrees from the parent workspace):</p>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Create the fleet’s checkouts:</strong></p>
+        <div class="brief" id="create-fleet">herdr worktree create --cwd /home/jimmerioles/Work/parallel-agent-orchestration --branch fleet-a --base dsv41fmax
+herdr worktree create --cwd /home/jimmerioles/Work/parallel-agent-orchestration --branch fleet-b --base dsv41fmax
+herdr worktree create --cwd /home/jimmerioles/Work/parallel-agent-orchestration --branch fleet-c --base dsv41fmax<button class="copy-btn" data-copy="#create-fleet">Copy</button></div>
+        <p class="step-hint">Three new workspaces appear in the sidebar, grouped with this repo.
+        Three independent worlds, three branches, no shared working directory.</p>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 2 · Staff and brief the fleet</h2>
+
+  <p>For each worker: click its workspace in the sidebar, start the agent in the pane, paste the
+  brief. Note the deliberate difference for C — no <kbd>c</kbd> alias, plain
+  <code>opencode</code>.</p>
+
+  <ol class="steps" style="counter-reset: step 1">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Worker A</strong> — in the <code>fleet-a</code> workspace, run <kbd>c</kbd>
+        (opencode auto), paste:</p>
+        <div class="brief" id="brief-a">Create an executable script at sandbox/tools/worktrees.sh (shebang #!/usr/bin/env bash, mode 755). It takes no arguments and prints one line per git worktree: the branch name, a single space, then the worktree path. Use git worktree list --porcelain. Create or modify no other file. Verify: ./sandbox/tools/worktrees.sh prints one line per worktree, including one for dsv41fmax and one for master, exit 0. Reply with just: done<button class="copy-btn" data-copy="#brief-a">Copy</button></div>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Worker B</strong> — in <code>fleet-b</code>, run <kbd>c</kbd>, paste:</p>
+        <div class="brief" id="brief-b">Create an executable script at sandbox/tools/branches.sh (shebang #!/usr/bin/env bash, mode 755). It takes no arguments and prints the local branch names, one per line, sorted alphabetically. Create or modify no other file. Verify: ./sandbox/tools/branches.sh prints dsv41fmax and master and the fleet branches, sorted, exit 0. Reply with just: done<button class="copy-btn" data-copy="#brief-b">Copy</button></div>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Worker C</strong> — in <code>fleet-c</code>, run plain <kbd>opencode</kbd>
+        (no <code>--auto</code>), paste:</p>
+        <div class="brief" id="brief-c">Create an executable script at sandbox/tools/agents.sh (shebang #!/usr/bin/env bash, mode 755) that prints the names of the coding-agent CLIs available on PATH, one per line, sorted. Check exactly these names with command -v: opencode, claude, codex, gemini, crush, copilot, cursor-agent. Also create ~/.cache/parallel-fleet/ and write a copy of the script's output to ~/.cache/parallel-fleet/agents.txt. Do not modify any other file in this repository. Verify: ./sandbox/tools/agents.sh includes opencode and claude; diff <(./sandbox/tools/agents.sh) ~/.cache/parallel-fleet/agents.txt prints nothing; exit 0. Reply with just: done<button class="copy-btn" data-copy="#brief-c">Copy</button></div>
+        <p class="step-hint">Worker C’s task writes <em>outside</em> its worktree, which opencode
+        guards by default. Without <code>--auto</code>, it will stop and ask you — that is your
+        blocked drill, engineered on purpose.</p>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 3 · Run the fleet, then triage</h2>
+
+  <ol class="steps" style="counter-reset: step 4">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Step back.</strong> All three briefs are issued; the sidebar should show three
+        agents <code>working</code>. This is the moment the fleet pays: you are free, not
+        watching. Do not spectate.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Rescue the blocked worker.</strong> Worker C will flip to <code>blocked</code>
+        (you may also get a desktop notification). Click its workspace, read the approval prompt,
+        and approve <strong>once</strong> — not “always”. Watch it flip back to
+        <code>working</code>, then <code>idle</code>.</p>
+        <p class="step-hint">Triage order, now practised: <strong>blocked first</strong> (it
+        cannot move without you), then <strong>idle/done</strong> (ready to review), and
+        <strong>working last</strong> (leave it alone). Approving “once” keeps the guardrail
+        intact — the harness lesson for a later day.</p>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 4 · Verify, accept, integrate</h2>
+
+  <p>For each worktree: open a shell tab, run its verification, review with hunk, commit. The
+  three files are independent, so this is Lesson 0003’s loop run three times.</p>
+
+  <ol class="steps" style="counter-reset: step 6">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Verify and accept each worker</strong> (in its own workspace shell tab):</p>
+        <div class="brief" id="accept-fleet"># in fleet-a
+./sandbox/tools/worktrees.sh
+git add sandbox/tools/worktrees.sh && hunk diff --staged && git commit -m "feat: add worktrees tool"
+# in fleet-b
+./sandbox/tools/branches.sh
+git add sandbox/tools/branches.sh && hunk diff --staged && git commit -m "feat: add branches tool"
+# in fleet-c
+./sandbox/tools/agents.sh && diff <(./sandbox/tools/agents.sh) ~/.cache/parallel-fleet/agents.txt
+git add sandbox/tools/agents.sh && hunk diff --staged && git commit -m "feat: add agents tool"<button class="copy-btn" data-copy="#accept-fleet">Copy</button></div>
+        <p class="step-hint">Each verification is the one from that worker’s brief — you are
+        checking the contract, not the vibes.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Merge the fleet</strong> — back in this workspace’s shell tab:</p>
+        <div class="brief" id="merge-fleet">for b in fleet-a fleet-b fleet-c; do git merge "$b" -m "merge: $b"; done
+git log --oneline --graph -8<button class="copy-btn" data-copy="#merge-fleet">Copy</button></div>
+        <p class="step-hint">Independent files mean clean merges (some fast-forward, some merge
+        commits, depending on order). No conflict — because you chose independent work and
+        isolated it. That was the whole point of Lessons 0002–0004.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Retire the fleet.</strong> Find the workspace IDs, remove each checkout, delete
+        the spent branches:</p>
+        <div class="brief" id="retire-fleet">herdr worktree list | jq -r '.result.worktrees[] | select(.branch | startswith("fleet-")) | "\(.branch)  \(.open_workspace_id)"'
+# then, for each ID printed:
+herdr worktree remove --workspace &lt;fleet-a-id&gt;
+herdr worktree remove --workspace &lt;fleet-b-id&gt;
+herdr worktree remove --workspace &lt;fleet-c-id&gt;
+git branch -d fleet-a fleet-b fleet-c
+git worktree list<button class="copy-btn" data-copy="#retire-fleet">Copy</button></div>
+      </span>
+    </li>
+  </ol>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p>Three tools landed on <code>dsv41fmax</code> (<code>worktrees.sh</code>,
+    <code>branches.sh</code>, <code>agents.sh</code>), you rescued exactly one blocked agent
+    without disabling its guardrail, and <code>git worktree list</code> is back to two checkouts
+    with all three fleet branches deleted.</p>
+  </div>
+
+  <h2>What just happened</h2>
+
+  <p>You ran a fleet under a WIP limit, provisioned it with worktrees, delegated with briefs,
+  triaged a blocked worker, and integrated three independent branches cleanly. That is the full
+  basic loop at scale — the same loop, three times, with a queue discipline on top.</p>
+
+  <div class="rulebox">
+    <span class="label">The Rule, at fleet scale</span>
+    <p>One task · one branch · one worktree · one agent · one deliberate merge — multiplied by a
+    WIP limit you set from your review bandwidth, never from your core count.</p>
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz">
+    <p class="q">Why cap the fleet at three agents?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Because you can review three</button>
+      <button class="option">Because three is always best</button>
+      <button class="option">Because the CPU has limits</button>
+      <button class="option">Because rate limits allow three</button>
+    </div>
+    <p class="explain">The cap comes from review bandwidth, not compute. Agents scale; your
+    attention doesn’t. More agents than you can review is inventory, not throughput.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Which agent do you handle first?</p>
+    <div class="options">
+      <button class="option" data-correct="true">The blocked one first</button>
+      <button class="option">The working one first</button>
+      <button class="option">The newest one first</button>
+      <button class="option">The cheapest one first</button>
+    </div>
+    <p class="explain">A blocked agent cannot progress without you, so it is burning idle time.
+    Working agents can wait; blocked ones can’t.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What must every fleet task have?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Independence, a brief, verification</button>
+      <button class="option">Urgency, complexity, and budget</button>
+      <button class="option">A senior engineer’s approval</button>
+      <button class="option">Shared files and tight coupling</button>
+    </div>
+    <p class="explain">Independent so it can run in its own worktree, briefed so it can’t
+    misread the goal, verifiable so “done” is provable. Coupled work multiplies review, not
+    output.</p>
+  </div>
+
+  <h2>Before next time</h2>
+
+  <p><strong>Primary source (15 minutes):</strong>
+  <a href="https://blog.pragmaticengineer.com/new-trend-programming-by-kicking-off-parallel-ai-agents/">Gergely
+  Orosz — “New trend: programming by kicking off parallel AI agents”</a>. Read it for the honest
+  limits: who benefits, why review fatigue is the ceiling, and where a WIP limit comes from in
+  practice.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>Tell me what the fleet felt like: did the blocked rescue work as described? Did three feel
+    like the right cap, or too many to review? Your honest calibration sets your real WIP limit —
+    and it shapes the next lesson.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>Next lesson: <em>Review Craft</em> — hunk in depth, agent rationale, and how to read a
+    diff fast without rubber-stamping.</p>
+  </div>
+
+</div>
+</body>
+</html>

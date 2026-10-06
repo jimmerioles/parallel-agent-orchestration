@@ -97,6 +97,17 @@
   while agents work); <code>hsa</code> = diff against the empty tree (every change). Built for
   agent-authored changesets; <code>--agent-context</code> reads a JSON rationale sidecar.</p>
 
+  <h2>Fleet ops</h2>
+  <ul class="compact">
+    <li><b>WIP limit:</b> cap in-flight agents at what you can review — start at three. Review
+    bandwidth, not CPU count.</li>
+    <li><b>Triage order:</b> <code>blocked</code> first → <code>idle</code>/<code>done</code>
+    review → <code>working</code> leave alone.</li>
+    <li><b>Blocked drill:</b> <code>--auto</code> (alias <code>c</code>) suppresses permission
+    asks; plain <code>opencode</code> asks on external-directory writes.
+    <code>permission.asked</code> → sidebar <code>blocked</code>.</li>
+  </ul>
+
   <h2>When something looks wrong</h2>
   <ul class="compact">
     <li>Agent state wrong? <code>herdr agent list</code>, then <code>herdr agent explain &lt;target&gt;</code>.</li>
