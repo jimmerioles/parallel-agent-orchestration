@@ -44,7 +44,7 @@ learning evidence lives in `learning-records/`.
 1. ✅ completed — *Make It Two*: two opencode workers, independent files, sidebar states, review.
 2. ✅ completed — *Two Agents, One File*: deliberate lost update, then worktree isolation.
 3. ✅ completed — *Merge Day*: accept each branch, conflict resolved by hand, worktrees retired; hunk used for both reviews.
-4. ✅ built — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; teacher critiques the draft before it reaches a worker.
+4. ✅ completed — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; user authored, teacher critiqued, worker executed, runbook verified. Sandbox now has `sandbox/tools/repo-state.sh` (reuse in #5).
 5. *The Fleet*: 3–5 agents, WIP limits, blocked-state triage, shared task state.
 6. *Review craft*: hunk deep dive, `--agent-context` rationale sidecars, review technique.
 7. *Agent-driven orchestration*: an orchestrator agent driving workers via herdr CLI/socket; opencode subagents.
