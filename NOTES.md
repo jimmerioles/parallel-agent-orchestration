@@ -9,6 +9,8 @@ learning evidence lives in `learning-records/`.
   (chosen in intake, 2026-10-05).
 - Wants the SE 3.0 paradigm understood, not just mechanics.
 - Practice target: **this repo as sandbox** (learning workspace = practice ground).
+- **WIP limit = 3** (user-calibrated 2026-10-07): three parallel agents feels right; keep fleet
+  scenarios at ≤3 unless the user says otherwise.
 - Prior teaching material from Oct 2026 exists elsewhere on disk. User chose **ignore it
   completely** — do not import from it, do not assume knowledge from it.
 - Self-reported hands-on baseline (2026-10-05): has never split a pane, made a git worktree,
@@ -51,7 +53,7 @@ learning evidence lives in `learning-records/`.
 2. ✅ completed — *Two Agents, One File*: deliberate lost update, then worktree isolation.
 3. ✅ completed — *Merge Day*: accept each branch, conflict resolved by hand, worktrees retired; hunk used for both reviews.
 4. ✅ completed — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; user authored, teacher critiqued, worker executed, runbook verified. Sandbox now has `sandbox/tools/repo-state.sh` (reuse in #5).
-5. ✅ built — *The Fleet*: 3 agents under a WIP limit, one engineered `blocked` rescue, sequential merge, retire.
+5. ✅ completed — *The Fleet*: 3 agents under a WIP limit, one engineered `blocked` rescue (worked), sequential merge, retire. WIP=3 confirmed.
 6. *Review craft*: hunk deep dive, `--agent-context` rationale sidecars, review technique.
 7. *Agent-driven orchestration*: an orchestrator agent driving workers via herdr CLI/socket; opencode subagents.
 8. *SE 3.0 in practice*: ACE/AEE framing, harness engineering (AGENTS.md), what stays human.
