@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 0008 — SE 3.0 in Practice</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+<style>
+  /* One-off for the finale: closing statements */
+  .creed {
+    border: 1.5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.1rem 1.3rem;
+    margin: 1.6rem 0;
+    background: var(--accent-soft);
+  }
+  .creed p { margin: 0.5rem 0; }
+  .creed .num {
+    font-family: ui-sans-serif, system-ui, "DejaVu Sans", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0007-the-orchestrator.html">← Lesson 0007</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Lesson 0008 · ~20 minutes · finale + capstone</p>
+  <h1>SE 3.0 in Practice</h1>
+  <p class="subtitle">The discipline you’ve been building — and what stays human.</p>
+
+  <h2>Where you are</h2>
+
+  <p>Eight lessons ago, two agents in two panes was the goal. You now run a fleet under a WIP
+  limit, isolate with worktrees, brief with verification, review with trust calibration, and
+  delegate the orchestration itself to an agent that behaves like you. The SASE framework calls
+  the two halves of what you built the <strong>Agent Command Environment</strong> (your
+  orchestration surface — herdr) and the <strong>Agent Execution Environment</strong> (where
+  agents act — worktrees, test commands, permissions). You have lived both
+  (<a href="https://arxiv.org/abs/2509.06216">Hassan et al., 2025</a>).</p>
+
+  <p>The last skill is the one that makes all of it compound: <strong>harness
+  engineering</strong>.</p>
+
+  <h2>Harness engineering</h2>
+
+  <p>The idea, from Mitchell Hashimoto: “anytime you find an agent makes a mistake, you take the
+  time to engineer a solution such that the agent never makes that mistake again”
+  (<a href="https://mitchellh.com/writing/my-ai-adoption-journey">2026</a>). Addy Osmani’s
+  consolidation adds the practice: fix the <em>environment</em> — a rule, a permission, a tool,
+  a skill — instead of correcting the output each time
+  (<a href="https://addyosmani.com/blog/agent-harness-engineering/">2026</a>).</p>
+
+  <p>You’ve been doing it implicitly all course: installing the herdr and hunk skills; baking the
+  <code>wait</code> gotcha into the manager brief; creating the shell-review primer after your
+  2/3 drill; treating commit-as-accept as convention. The capstone makes it explicit — and
+  permanent.</p>
+
+  <h2>Capstone · Encode your conventions</h2>
+
+  <p>Every agent that works in this repo reads <code>AGENTS.md</code> at the start. Anything you
+  put there becomes the environment’s default behavior — the harness. Your task: adapt the
+  template below to say what <em>you</em> want future agents to obey, add it to
+  <code>AGENTS.md</code>, and commit.</p>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Draft your orchestration conventions.</strong> Start from these six — edit,
+        cut, or add. One of them exists because of something you felt yesterday.</p>
+        <div class="brief" id="creed-template">## Orchestration conventions (this repo)
+
+- One task · one branch · one worktree · one agent. Writes stay single-threaded; merge deliberately.
+- Every brief includes Goal, Deliverable, Constraints, Verification, Report. No verification command, no delegation.
+- Commit = accept. Agent output is committed only after the human runs the verification.
+- Parallelize only independent, precisely specified, machine-verifiable, low-stakes work. WIP limit: 3.
+- Control room is herdr: agent prompt without --wait; agent wait with the default until; parse IDs from JSON responses.
+- Rationale is a claim, not evidence. Agent notes and sidecars must be verified against the diff and the acceptance command.<button class="copy-btn" data-copy="#creed-template">Copy</button></div>
+        <p class="step-hint">That last rule is yours to keep: in the debrief you said the agent’s
+        notes made you understand the change faster <em>and trust it more</em>. The first is the
+        feature. The second is exactly what this rule protects against — the trust has to stay
+        earned.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Add it to <code>AGENTS.md</code></strong> (any editor), then commit it as the
+        harness change it is:</p>
+        <div class="brief" id="creed-commit">git add AGENTS.md
+hunk diff --staged
+git commit -m "docs: add orchestration conventions to AGENTS.md"<button class="copy-btn" data-copy="#creed-commit">Copy</button></div>
+      </span>
+    </li>
+  </ol>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p><code>AGENTS.md</code> contains conventions you actually believe, committed — and you can
+    name which future agent mistake each rule prevents. That is harness engineering: the lesson
+    outlives the session because the environment now carries it.</p>
+  </div>
+
+  <h2>What stays human</h2>
+
+  <div class="creed">
+    <p><span class="num">1 · INTENT</span><br>Deciding what is worth building and what “good”
+    means. Agents optimize what you ask for; they can’t want the right thing for you.</p>
+    <p><span class="num">2 · ACCEPTANCE</span><br>The merge click. Verification before trust —
+    the acceptance command runs before the commit lands, every time.</p>
+    <p><span class="num">3 · ACCOUNTABILITY</span><br>“The agent wrote it” doesn’t cut it
+    (<a href="https://addyosmani.com/blog/own-the-outer-loop/">Osmani, “Own the Outer Loop,”
+    2026</a>). Your name is on the diff.</p>
+    <p><span class="num">4 · RESTRAINT</span><br>Knowing when <em>not</em> to parallelize. The
+    counter-evidence is real: reported multi-agent gains often shrink when compute is matched
+    (<a href="https://arxiv.org/abs/2503.13657">MAST, 2025</a>). Coupled, fuzzy, high-stakes work
+    stays single-threaded.</p>
+    <p><span class="num">5 · TASTE</span><br>Design, naming, and the judgment no acceptance
+    command covers. This is where seniority compounds.</p>
+  </div>
+
+  <h2>The other parallelism: subagents</h2>
+
+  <p>One path this course didn’t take: opencode’s built-in <strong>subagents</strong> — an agent
+  spawning clean-context helpers in-process (a search agent, a reviewer, a general worker) via
+  its task tool, defined as markdown files in <code>~/.config/opencode/agents/</code>
+  (<a href="https://opencode.ai/docs/agents/">docs</a>). Rule of thumb:</p>
+  <table>
+    <tr><th></th><th>Subagents</th><th>Herdr workers</th></tr>
+    <tr><td>Shape</td><td>In-process; returns a distilled summary</td><td>Independent CLI session with its own terminal</td></tr>
+    <tr><td>Best for</td><td>Read-heavy fan-out: search, explore, review — Cognition’s “intelligence” agents</td><td>Writes, long tasks, model mix, visible state, human triage</td></tr>
+    <tr><td>Cost</td><td>Cheaper; context-isolated</td><td>Full session; your review bandwidth</td></tr>
+  </table>
+  <p class="sidenote">Cognition’s 2026 rule covers both: extra agents contribute intelligence;
+  writes stay single-threaded. Subagents are the cheapest way to add a reader.</p>
+
+  <h2>Where to take this next</h2>
+
+  <p>Wisdom lives in communities, not lessons. Pick one and do one thing this week:</p>
+  <ul>
+    <li><a href="https://opencode.ai/discord">opencode Discord</a> — post your fleet toolkit
+    (the <code>sandbox/tools/</code> set) or ask how others are handling the opencode v2
+    transition.</li>
+    <li><a href="https://news.ycombinator.com/">Hacker News</a> — stress-test one of your
+    conventions against the skeptics.</li>
+    <li><a href="https://www.latent.space/">Latent.Space</a> — where practice shows up first.</li>
+    <li>Omarchy Discord (via <a href="https://omarchy.org/">omarchy.org</a>) — machine-specific
+    herdr/Hyprland questions.</li>
+  </ul>
+
+  <h2>Final check</h2>
+
+  <div class="quiz">
+    <p class="q">What is harness engineering?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Fixing the environment after failures</button>
+      <button class="option">Writing tests after each failure</button>
+      <button class="option">Replacing models with better ones</button>
+      <button class="option">Prompting more carefully each time</button>
+    </div>
+    <p class="explain">Turn every agent mistake into an environment fix — a rule, a permission, a
+    tool, a skill — so the mistake can’t recur. Your AGENTS.md section is exactly this.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What stays human in the loop?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Intent, acceptance, and accountability</button>
+      <button class="option">Provisioning, staffing, and waiting</button>
+      <button class="option">Prompting, waiting, and reading</button>
+      <button class="option">Merging, branching, and cleaning</button>
+    </div>
+    <p class="explain">Mechanics moved to agents; judgment didn’t. You decide what to build,
+    whether it lands, and you carry the name on the diff.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What is an agent rationale note?</p>
+    <div class="options">
+      <button class="option" data-correct="true">A claim to verify</button>
+      <button class="option">A proof of correctness</button>
+      <button class="option">A substitute for review</button>
+      <button class="option">A guarantee from tooling</button>
+    </div>
+    <p class="explain">The drill’s rationale argued for a bug. You felt the pull yesterday:
+    notes speed understanding and raise trust — verify both against the diff and the command.</p>
+  </div>
+
+  <h2>Primary source</h2>
+
+  <p><strong>Read (15 minutes):</strong>
+  <a href="https://addyosmani.com/blog/own-the-outer-loop/">Addy Osmani — “Own the Outer
+  Loop”</a> — the operating model for everything you’ve built: inner loops do the work, humans
+  own the outer loop of intent, evidence, and back-pressure. For the academic frame, skim the
+  <a href="https://arxiv.org/abs/2509.06216">SASE paper</a>’s ACE/AEE sections.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>The course is complete, but the teacher isn’t going anywhere. Bring a real project when
+    you have one — or say the word for the bonus session on opencode subagents. Every fumble you
+    bring back is the next harness fix.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../reference/shell-review-primer.html">Shell-diff review primer</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>Course arc: <a href="../lessons/0001-make-it-two.html">Make It Two</a> ·
+    <a href="../lessons/0002-two-agents-one-file.html">Two Agents, One File</a> ·
+    <a href="../lessons/0003-merge-day.html">Merge Day</a> ·
+    <a href="../lessons/0004-the-brief.html">The Brief</a> ·
+    <a href="../lessons/0005-the-fleet.html">The Fleet</a> ·
+    <a href="../lessons/0006-review-craft.html">Review Craft</a> ·
+    <a href="../lessons/0007-the-orchestrator.html">The Orchestrator</a> ·
+    SE 3.0 in Practice</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -80,7 +80,7 @@ learning evidence lives in `learning-records/`.
 5. ✅ completed — *The Fleet*: 3 agents under a WIP limit, one engineered `blocked` rescue (worked), sequential merge, retire. WIP=3 confirmed.
 6. ✅ completed — *Review Craft*: trust calibration + five moves; drill scored **2/3** (missed the `git diff --quiet` silent semantic gap). `reference/shell-review-primer.html` added; live hunk features (skill, inline comments, human notes) deferred to #7.
 7. ✅ completed — *The Orchestrator*: skills installed, orchestrator drove worktree→start→prompt→wait→read, worker committed (`c05459a`, FF-merged), live hunk review driven by an agent. User named the recursion: “the orchestrator behaves like me.” opencode-native subagents still uncovered.
-8. *SE 3.0 in practice*: ACE/AEE framing, harness engineering (AGENTS.md), what stays human.
+8. ✅ built — *SE 3.0 in Practice*: harness engineering, capstone (encode conventions in `AGENTS.md`), what stays human, subagents comparison, community step. Final lesson.
 
 ## Teaching conventions
 - Quiz options matched in word count; immediate feedback; retrieval from memory.

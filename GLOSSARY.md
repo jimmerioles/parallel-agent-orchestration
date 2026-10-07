@@ -115,3 +115,17 @@ mentor, and oversee agent teams. Herdr is a working instance of one.
 _Avoid_: “dashboard”, “control panel”
 _Source_: [SASE, 2025](https://arxiv.org/abs/2509.06216)
 _Taught_: [Lesson 0007](lessons/0007-the-orchestrator.html)
+
+**Agent Execution Environment (AEE)**:
+The SASE paper’s name for where agents act — worktrees, sandboxes, test commands, permissions.
+The other half of the split: herdr is your ACE; the worktrees are your AEE.
+_Avoid_: “runtime”, “sandbox” (a sandbox is one possible AEE)
+_Source_: [SASE, 2025](https://arxiv.org/abs/2509.06216)
+_Taught_: [Lesson 0008](lessons/0008-se3-in-practice.html)
+
+**Harness engineering**:
+Turning every agent mistake into an environment fix — a rule in AGENTS.md, a permission, a tool,
+a skill — so the error cannot recur, rather than correcting the output each time.
+_Avoid_: “prompt tweaking”, “retrying”
+_Source_: [Hashimoto, 2026](https://mitchellh.com/writing/my-ai-adoption-journey); [Osmani, 2026](https://addyosmani.com/blog/agent-harness-engineering/)
+_Taught_: [Lesson 0008](lessons/0008-se3-in-practice.html)

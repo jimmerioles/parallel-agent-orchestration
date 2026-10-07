@@ -58,6 +58,9 @@ verify before the subagents lesson.
 - [Post: Addy Osmani — “Agent Harness Engineering” (Apr 2026)](https://addyosmani.com/blog/agent-harness-engineering/)
   Consolidates the harness vocabulary and the practice of turning every agent mistake into an
   environment fix. Use for: harness engineering, alongside Hashimoto and Anthropic’s harness posts.
+- [Post: Addy Osmani — “Own the Outer Loop” (Jul 2026)](https://addyosmani.com/blog/own-the-outer-loop/)
+  The operating model: inner loops do the work; humans own the outer loop of intent, evidence,
+  and back-pressure. Use for: Lesson 0008’s finale and the accountability frame.
 - [Paper: MAST — “Why Do Multi-Agent LLM Systems Fail?” (arXiv 2503.13657)](https://arxiv.org/abs/2503.13657)
   Taxonomy of multi-agent failure modes; reported benchmark gains often minimal. Use for: honest
   “when not to parallelize” material.
