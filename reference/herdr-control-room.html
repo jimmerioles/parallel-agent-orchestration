@@ -118,6 +118,18 @@
     <code>permission.asked</code> → sidebar <code>blocked</code>.</li>
   </ul>
 
+  <h2>Orchestrator commands</h2>
+  <table>
+    <tr><th>Step</th><th>Command</th></tr>
+    <tr><td>Provision</td><td><code>herdr worktree create --cwd &lt;parent&gt; --branch B --base REF</code> → parse <code>.result.root_pane.pane_id</code></td></tr>
+    <tr><td>Staff</td><td><code>herdr agent start NAME --kind opencode --pane ID --timeout 60000</code></td></tr>
+    <tr><td>Brief</td><td><code>herdr agent prompt NAME "…"</code> — no <code>--wait</code> (it stalls on the 5s window)</td></tr>
+    <tr><td>Wait</td><td><code>herdr agent wait NAME --timeout 300000</code> — default matches idle/done/blocked; never narrow to <code>--until idle</code></td></tr>
+    <tr><td>Collect</td><td><code>herdr agent read NAME --lines 30</code> · <code>herdr agent focus NAME</code> marks it seen</td></tr>
+  </table>
+  <p class="sidenote">Skills (loaded at session start): <code>herdr --skill &gt; ~/.agents/skills/herdr/SKILL.md</code> ·
+  <code>ln -sf "$(hunk skill path)" ~/.agents/skills/hunk-review/SKILL.md</code></p>
+
   <h2>When something looks wrong</h2>
   <ul class="compact">
     <li>Agent state wrong? <code>herdr agent list</code>, then <code>herdr agent explain &lt;target&gt;</code>.</li>

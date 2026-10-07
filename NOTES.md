@@ -50,7 +50,17 @@ learning evidence lives in `learning-records/`.
   C-compiler capstone, Willison living guide, Osmani harness engineering, MAST counter-evidence.
 - **User preference (2026-10-07):** wants hunk’s differentiated features used — bundled review
   skill (`hunk skill path`), live agent comments (`hunk session ...`), human notes. Fold into
-  Lesson 0007 as the reviewer-agent workflow.
+  Lesson 0007 as the reviewer-agent workflow. **Done: built into Lesson 0007.**
+- **Orchestrator probe (verified 2026-10-07):** end-to-end flow works —
+  `herdr worktree create --cwd <parent>` → parse `.result.root_pane.pane_id` →
+  `herdr agent start NAME --kind opencode --pane ID --timeout 60000` →
+  `herdr agent prompt NAME "…"` (**no `--wait`**: it errors `agent_prompt_stalled` on the fixed
+  5s observation window) → `herdr agent wait NAME` (**default `until`**; `--until idle` misses
+  opencode’s `done` and times out) → `herdr agent read NAME --lines N`. Worker settles as
+  `done`; `agent focus` marks it seen.
+- **Skill install (documented in Lesson 0007):** `herdr --skill > ~/.agents/skills/herdr/SKILL.md`
+  and `ln -sf "$(hunk skill path)" ~/.agents/skills/hunk-review/SKILL.md`. Skills load at
+  session start — new sessions only. Not yet installed on the machine as of this note.
 - Omarchy 4.0.0.alpha (quattro) with tmux 3.7c + shell functions (`tdl`, `tds`, `tslm`, `tsl`,
   `ga`, `gd`) — fallback control room if herdr is unavailable.
 - Repo: this worktree is branch `dsv41fmax`; main checkout at `~/Work/parallel-agent-orchestration`
@@ -69,7 +79,7 @@ learning evidence lives in `learning-records/`.
 4. ✅ completed — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; user authored, teacher critiqued, worker executed, runbook verified. Sandbox now has `sandbox/tools/repo-state.sh` (reuse in #5).
 5. ✅ completed — *The Fleet*: 3 agents under a WIP limit, one engineered `blocked` rescue (worked), sequential merge, retire. WIP=3 confirmed.
 6. ✅ completed — *Review Craft*: trust calibration + five moves; drill scored **2/3** (missed the `git diff --quiet` silent semantic gap). `reference/shell-review-primer.html` added; live hunk features (skill, inline comments, human notes) deferred to #7.
-7. *Agent-driven orchestration*: an orchestrator agent driving workers via herdr CLI/socket; opencode subagents.
+7. ✅ built — *The Orchestrator*: skills install, manager brief (orchestrator drives worktree→agent start→prompt→wait→read), live hunk review driven by an agent, human accept.
 8. *SE 3.0 in practice*: ACE/AEE framing, harness engineering (AGENTS.md), what stays human.
 
 ## Teaching conventions

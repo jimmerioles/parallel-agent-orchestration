@@ -100,3 +100,18 @@ confident and there is no author to interrogate. The core review skill for AI-ge
 _Avoid_: “code review”, “spot-checking”
 _Source_: [JetBrains Research, Oct 2026](https://blog.jetbrains.com/research/2026/10/review-ai-generated/)
 _Taught_: [Lesson 0006](lessons/0006-review-craft.html)
+
+**Orchestrator agent**:
+An agent whose task is to drive other agents — provisioning worktrees, starting workers, waiting
+on state, collecting reports — through herdr’s CLI. The agent-side counterpart of you at the
+keyboard; it owns mechanics, never the write.
+_Avoid_: “manager bot”, “supervisor”
+_Source_: [Cognition, Apr 2026](https://cognition.com/blog/multi-agents-working)
+_Taught_: [Lesson 0007](lessons/0007-the-orchestrator.html)
+
+**Agent Command Environment (ACE)**:
+The SASE paper’s name for the human’s orchestration surface — the screen where you command,
+mentor, and oversee agent teams. Herdr is a working instance of one.
+_Avoid_: “dashboard”, “control panel”
+_Source_: [SASE, 2025](https://arxiv.org/abs/2509.06216)
+_Taught_: [Lesson 0007](lessons/0007-the-orchestrator.html)

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 0007 — The Orchestrator</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0006-review-craft.html">← Lesson 0006</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Lesson 0007 · ~25 minutes · hands-on</p>
+  <h1>The Orchestrator</h1>
+  <p class="subtitle">Delegate the orchestration itself — one agent that provisions, staffs, waits, and reports.</p>
+
+  <h2>The one idea</h2>
+
+  <p>For six lessons <em>you</em> have been the orchestrator. The SASE framework names your
+  surface the <strong>Agent Command Environment</strong>: “a command center where humans
+  orchestrate, mentor, and oversee agent teams”
+  (<a href="https://arxiv.org/abs/2509.06216">Hassan et al., 2025</a>). Herdr is a working
+  instance of one. Today the mechanics move to an agent.</p>
+
+  <p>Cognition’s 2026 field report gives the pattern a shape: a <strong>manager</strong> splits
+  work, children execute, the manager synthesizes — and <em>writes stay single-threaded</em>
+  (<a href="https://cognition.com/blog/multi-agents-working">“Multi-Agents: What’s Actually
+  Working,” Apr 2026</a>). So the orchestrator agent will create the worktree, start the worker,
+  submit the brief, wait, and read the result. It will <strong>not</strong> write code and will
+  <strong>not</strong> merge. Those stay with the worker and with you.</p>
+
+  <div class="rulebox">
+    <span class="label">The boundary</span>
+    <p>The orchestrator owns <strong>mechanics</strong>; you keep <strong>judgment</strong>.
+    The worker owns the <strong>write</strong>. One writer per artifact, always.</p>
+  </div>
+
+  <h2>Part 1 · Upgrade the harness</h2>
+
+  <p>Agents learn tools through <strong>skills</strong>. Install two — the herdr skill (so an
+  agent can drive this machine’s control room) and hunk’s review skill (so an agent can steer a
+  live review). Both are one-liners, and both stay in sync with upgrades:</p>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Install the skills</strong> in a shell tab:</p>
+        <div class="brief" id="install-skills">mkdir -p ~/.agents/skills/herdr ~/.agents/skills/hunk-review
+herdr --skill > ~/.agents/skills/herdr/SKILL.md
+ln -sf "$(hunk skill path)" ~/.agents/skills/hunk-review/SKILL.md
+ls ~/.agents/skills/herdr ~/.agents/skills/hunk-review<button class="copy-btn" data-copy="#install-skills">Copy</button></div>
+        <p class="step-hint">The symlink is hunk’s own recommended method (“load or symlink that
+        file … to keep it in sync across Hunk upgrades”). Skills load at session start — which is
+        why the next step starts a <em>fresh</em> agent.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Start a fresh orchestrator.</strong> Split a pane (<kbd>ctrl</kbd>+<kbd>space</kbd>
+        then <kbd>v</kbd>) and run <kbd>c</kbd> in the new pane. Don’t reuse the old worker
+        panes — their sessions started before the skills existed.</p>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 2 · The manager brief</h2>
+
+  <p>Paste this whole message into the orchestrator. It contains its own instructions plus the
+  inner brief it must forward to the worker — a brief within a brief.</p>
+
+  <div class="brief" id="manager-brief">Use the herdr skill. You are the orchestrator. Provision one isolated worker, delegate the inner brief, wait for it, then report. Steps:
+1. Create the worktree: herdr worktree create --cwd /home/jimmerioles/Work/parallel-agent-orchestration --branch orch-a --base dsv41fmax
+   Parse .result.workspace.workspace_id and .result.root_pane.pane_id from the JSON response.
+2. Start the worker in that pane: herdr agent start orch-worker --kind opencode --pane &lt;pane_id&gt; --timeout 60000
+3. Submit the inner brief (no --wait): herdr agent prompt orch-worker "Create an executable script at sandbox/tools/worktree-count.sh (shebang #!/usr/bin/env bash, mode 755) that prints the number of git worktrees as a single integer, using git worktree list --porcelain. Create or modify no other file. Verify by running it. Then git add sandbox/tools/worktree-count.sh and git commit -m 'feat: add worktree-count tool'. Reply with just: done"
+4. Wait for it: herdr agent wait orch-worker --timeout 300000
+   If this times out, inspect with herdr agent list and herdr agent read orch-worker --lines 30 before retrying; do not re-prompt blindly.
+5. Read the report: herdr agent read orch-worker --lines 30
+6. Report back to me: the branch name, the worker's final status, and the last 10 lines of its output.
+Constraints: use only the herdr CLI and git. Do not create or modify files yourself. Do not merge. Do not remove the worktree. Do not touch other workspaces or agents.<button class="copy-btn" data-copy="#manager-brief">Copy</button></div>
+
+  <h2>Part 3 · Watch the machine run</h2>
+
+  <ol class="steps" style="counter-reset: step 2">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Read the sidebar, not the terminals.</strong> The sequence you should see:
+        orchestrator <code>working</code> → a new <code>orch-a</code> workspace appears → a new
+        agent <code>orch-worker</code> starts and goes <code>working</code> → worker
+        <code>done</code> → orchestrator reads and reports.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>If the orchestrator’s <code>wait</code> times out</strong> even though the
+        worker finished: that’s a real herdr subtlety, not a bug in your machine. opencode can
+        settle as <code>done</code>, and <code>--until idle</code> would miss it — which is why
+        the brief says to use the default. Watch how the agent recovers; that recovery is part
+        of the lesson.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Confirm the write happened once:</strong> the worker committed in its own
+        worktree — the orchestrator wrote nothing and merged nothing. That’s the single-writer
+        rule holding at machine speed.</p>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 4 · Review it live with an agent</h2>
+
+  <p>Now the feature you asked about. Open the worker’s branch in hunk and leave it running:</p>
+
+  <ol class="steps" style="counter-reset: step 5">
+    <li class="step">
+      <span class="step-body">
+        <div class="brief" id="open-hunk">hunk diff dsv41fmax orch-a<button class="copy-btn" data-copy="#open-hunk">Copy</button></div>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Ask your teacher to drive it.</strong> In this pane, paste:</p>
+        <div class="brief" id="hunk-prompt">Load the Hunk skill and walk me through this live review.<button class="copy-btn" data-copy="#hunk-prompt">Copy</button></div>
+        <p>Watch the window move by itself: files and hunks navigated, inline comments anchored to
+        lines. The agent contributes <em>intelligence</em>; the diff stays yours to judge. Leave a
+        human note from the viewer if you want to feel the other side of the conversation.</p>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 5 · Accept and clean up</h2>
+
+  <p>The human keeps the accept step. Review done? Merge, retire the worktree, delete the branch:</p>
+
+  <div class="brief" id="accept-orch">git merge orch-a
+herdr worktree list | jq -r '.result.worktrees[] | select(.branch=="orch-a") | .open_workspace_id'
+herdr worktree remove --workspace &lt;orch-a-id&gt;
+git branch -d orch-a<button class="copy-btn" data-copy="#accept-orch">Copy</button></div>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p><code>sandbox/tools/worktree-count.sh</code> is merged into <code>dsv41fmax</code>, the
+    orchestrator reported the worker’s status and output without you touching a worktree or
+    agent command, and you watched an agent steer a live hunk review of the result.</p>
+  </div>
+
+  <h2>What just happened</h2>
+
+  <p>You moved up a level. The loop is the same one from Lesson 0001 — brief, delegate, verify,
+  accept — but the orchestration mechanics now run inside an agent while your attention stays on
+  judgment. That’s the Agent Command Environment in practice, and it’s how the pattern scales:
+  your WIP limit now applies to <em>orchestrators</em> as much as workers.</p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz">
+    <p class="q">What does the orchestrator agent own?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Mechanics, while you keep judgment</button>
+      <button class="option">Judgment, while you keep mechanics</button>
+      <button class="option">Both mechanics and final judgment</button>
+      <button class="option">Neither mechanics nor any judgment</button>
+    </div>
+    <p class="explain">It provisions, staffs, waits, and reports. You decide what’s worth doing
+    and whether the result lands. The worker owns the write.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Why does the worker commit its own work?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Writes stay single-threaded</button>
+      <button class="option">Merges happen before review</button>
+      <button class="option">Agents cannot run git</button>
+      <button class="option">Branches must stay short</button>
+    </div>
+    <p class="explain">Cognition’s 2026 rule: extra agents contribute intelligence, not actions.
+    One writer per artifact; you merge deliberately after review.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Which wait command settles correctly?</p>
+    <div class="options">
+      <button class="option" data-correct="true">agent wait with default until</button>
+      <button class="option">agent prompt with wait flag</button>
+      <button class="option">agent read with recent lines</button>
+      <button class="option">agent list with name filter</button>
+    </div>
+    <p class="explain">The default matches <code>idle</code>, <code>done</code>, and
+    <code>blocked</code>. Narrowing to <code>--until idle</code> misses opencode’s
+    <code>done</code> state — the probe that built this lesson hit exactly that.</p>
+  </div>
+
+  <h2>Before next time</h2>
+
+  <p><strong>Primary source (15 minutes):</strong>
+  <a href="https://cognition.com/blog/multi-agents-working">Cognition — “Multi-Agents: What’s
+  Actually Working” (Apr 2026)</a>. Read it for the manager pattern, the clean-context reviewer,
+  and the smart-friend idea — all three are patterns you can now build with what you have.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>For the live hunk step, I’m the agent — paste the prompt and I’ll drive the session.
+    Afterwards, tell me where the orchestrator fumbled: every fumble is a brief that needs
+    tightening, which is harness engineering in miniature.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../reference/shell-review-primer.html">Shell-diff review primer</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>Next lesson: <em>SE 3.0 in Practice</em> — harness engineering, the ACE/AEE split, and
+    what stays human.</p>
+  </div>
+
+</div>
+</body>
+</html>
