@@ -7,7 +7,7 @@
       "summary": "New tool: parses git worktree list --porcelain and prints one line per worktree.",
       "annotations": [
         {
-          "newRange": [1, 17],
+          "newRange": [1, 16],
           "summary": "Uses git diff --quiet for a fast clean/dirty check, matching repo-state.sh semantics.",
           "rationale": "git diff --quiet is the cheapest way to answer clean vs dirty; untracked files are ignored so the check stays fast in large trees.",
           "author": "opencode"

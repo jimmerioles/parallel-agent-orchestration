@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading Shell Diffs — Review Primer</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0006-review-craft.html">← Lesson 0006</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Reference · Review Craft</p>
+  <h1>Reading Shell Diffs</h1>
+  <p class="subtitle">What the command <em>actually</em> checks — the skill that catches silent gaps.</p>
+
+  <p>Agent-written shell tools fail quietly: the command looks right, the verification passes,
+  and the gap hides in what the command never inspected. The review question is always the same:
+  <strong>what does this line actually cover, and what does it miss?</strong></p>
+
+  <h2>Clean/dirty checks: what each one sees</h2>
+  <table>
+    <tr><th>Command (quiet variants)</th><th>Sees</th><th>Misses</th></tr>
+    <tr>
+      <td><code>git diff --quiet</code></td>
+      <td>Unstaged edits to <b>tracked</b> files</td>
+      <td>Staged edits · untracked files</td>
+    </tr>
+    <tr>
+      <td><code>git diff --cached --quiet</code></td>
+      <td>Staged edits only</td>
+      <td>Unstaged edits · untracked files</td>
+    </tr>
+    <tr>
+      <td><code>git status --porcelain</code></td>
+      <td><b>Everything:</b> staged, unstaged, untracked</td>
+      <td>Nothing — empty output means clean</td>
+    </tr>
+    <tr>
+      <td><code>git status --porcelain -uno</code></td>
+      <td>Staged + unstaged (tracked only)</td>
+      <td>Untracked files</td>
+    </tr>
+  </table>
+  <p class="sidenote">Rule of thumb: if a tool claims “clean or dirty,” it must mean
+  <code>git status --porcelain</code>. Anything narrower is a spec gap waiting to happen
+  (this was defect #3 in the Lesson 0006 drill).</p>
+
+  <h2>Porcelain formats worth recognising</h2>
+  <table>
+    <tr><th>Output</th><th>Looks like</th><th>Watch out for</th></tr>
+    <tr>
+      <td><code>git status --porcelain</code></td>
+      <td><code>?? new.sh</code> · <code> M file</code> · <code>M  file</code></td>
+      <td>Two columns: staged first, unstaged second. <code>??</code> = untracked.</td>
+    </tr>
+    <tr>
+      <td><code>git worktree list --porcelain</code></td>
+      <td><code>branch refs/heads/dsv41fmax</code></td>
+      <td><b>Full refs.</b> Strip with <code>${x#refs/heads/}</code> (defect #2).</td>
+    </tr>
+    <tr>
+      <td><code>git branch --show-current</code></td>
+      <td><code>dsv41fmax</code></td>
+      <td>Empty on detached HEAD — handle or declare out of scope.</td>
+    </tr>
+  </table>
+
+  <h2>Silent-failure patterns to hunt in review</h2>
+  <ul>
+    <li><code>2&gt;/dev/null</code> — hides the error message; the exit code still lies onward.</li>
+    <li><code>|| true</code> — failure becomes success.</li>
+    <li><code>|| echo clean</code> — failure becomes a <em>claim</em>. The worst kind.</li>
+    <li><b>Missing <code>set -euo pipefail</code></b> — a failing command mid-script doesn’t stop
+    it. <code>-e</code>: exit on error · <code>-u</code>: error on unset variables ·
+    <code>-o pipefail</code>: a pipeline fails if any stage fails.</li>
+    <li><code>if cmd; then A; else B; fi</code> — check which branch means success. Exit 0 =
+    “no differences” for <code>--quiet</code> checks, which inverts naive reading.</li>
+    <li>Unquoted expansions — <code>$var</code> with spaces or empty splits into the wrong args.</li>
+  </ul>
+
+  <h2>The three questions for any shell tool</h2>
+  <ol>
+    <li><b>What does it claim to check?</b> Find the sentence in the brief or comment.</li>
+    <li><b>What does the exact command cover?</b> Match it against the first table above.</li>
+    <li><b>What happens when the command fails?</b> Follow the <code>else</code> and every
+    <code>||</code>.</li>
+  </ol>
+
+  <div class="rulebox">
+    <span class="label">Worked example</span>
+    <p>The Lesson 0006 drill’s <code>fleet-summary.sh</code> used
+    <code>git -C "$path" diff --quiet 2&gt;/dev/null</code>: it missed staged and untracked
+    changes (question 2) and hid its own errors (question 3) — while its rationale claimed
+    “matching repo-state.sh semantics.” Three questions, thirty seconds.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Companions:</strong>
+    <a href="../lessons/0006-review-craft.html">Lesson 0006 — Review Craft</a> ·
+    <a href="../reference/herdr-control-room.html">Control-Room Card</a> ·
+    <a href="../GLOSSARY.md">Glossary</a></p>
+    <p>Primary sources: <a href="https://blog.jetbrains.com/research/2026/10/review-ai-generated/">JetBrains
+    review framework</a> · <a href="https://docs.github.com/en/copilot/tutorials/review-ai-generated-code">GitHub’s
+    AI-code review guide</a> · git’s own <code>--help</code> pages (the ground truth for every
+    command above).</p>
+  </div>
+
+</div>
+</body>
+</html>

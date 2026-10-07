@@ -37,12 +37,20 @@ learning evidence lives in `learning-records/`.
   `opencode` only asks at guardrails — notably `external_directory` (paths outside cwd), which
   defaults to `ask`. `--auto` (Omarchy alias `c`) suppresses those asks. Lesson 0005 engineers a
   blocked agent by having a non-auto worker write outside its worktree.
-- **Review drill branch (lesson 0006):** local branch `review-drill` (based on `dsv41fmax`)
-  holds three planted defects — scope creep (`branches.sh` loses `| sort`), `refs/heads/` prefix
-  bug, and `git diff --quiet` missing untracked/staged. Rationale sidecar lives on `dsv41fmax`
-  at `reference/review-drill-rationale.json`. Never merge; the learner deletes the branch after
-  the drill. **Do not commit to `dsv41fmax` while the drill is in flight** (it pollutes the
-  branch diff).
+- **Review drill branch (lesson 0006):** local branch `review-drill` held three planted defects —
+  scope creep (`branches.sh` loses `| sort`), `refs/heads/` prefix bug, and `git diff --quiet`
+  missing untracked/staged. **Deleted by the learner 2026-10-07 after the drill.** The rationale
+  sidecar remains as a reference artifact at `reference/review-drill-rationale.json`. Design rule
+  still holds: **do not commit to `dsv41fmax` while a branch-diff drill is in flight** (it
+  pollutes the diff).
+- **Resource recency audit (2026-10-07):** DORA 2025 still latest (no 2026 edition); hunk 0.23.0
+  current; herdr 0.9.3 latest (machine 0.8.2 — update between lessons, re-verify card); opencode
+  v1.18.35 current on the v1 line, **v2 exists** — verify config/agents against v2 before the
+  subagents lesson. RESOURCES updated: Cognition 2026 sequel, Anthropic harness series +
+  C-compiler capstone, Willison living guide, Osmani harness engineering, MAST counter-evidence.
+- **User preference (2026-10-07):** wants hunk’s differentiated features used — bundled review
+  skill (`hunk skill path`), live agent comments (`hunk session ...`), human notes. Fold into
+  Lesson 0007 as the reviewer-agent workflow.
 - Omarchy 4.0.0.alpha (quattro) with tmux 3.7c + shell functions (`tdl`, `tds`, `tslm`, `tsl`,
   `ga`, `gd`) — fallback control room if herdr is unavailable.
 - Repo: this worktree is branch `dsv41fmax`; main checkout at `~/Work/parallel-agent-orchestration`
@@ -60,7 +68,7 @@ learning evidence lives in `learning-records/`.
 3. ✅ completed — *Merge Day*: accept each branch, conflict resolved by hand, worktrees retired; hunk used for both reviews.
 4. ✅ completed — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; user authored, teacher critiqued, worker executed, runbook verified. Sandbox now has `sandbox/tools/repo-state.sh` (reuse in #5).
 5. ✅ completed — *The Fleet*: 3 agents under a WIP limit, one engineered `blocked` rescue (worked), sequential merge, retire. WIP=3 confirmed.
-6. ✅ built — *Review Craft*: trust calibration, five review moves, planted-defect drill branch (`review-drill`), rationale sidecar. Sources now in RESOURCES.
+6. ✅ completed — *Review Craft*: trust calibration + five moves; drill scored **2/3** (missed the `git diff --quiet` silent semantic gap). `reference/shell-review-primer.html` added; live hunk features (skill, inline comments, human notes) deferred to #7.
 7. *Agent-driven orchestration*: an orchestrator agent driving workers via herdr CLI/socket; opencode subagents.
 8. *SE 3.0 in practice*: ACE/AEE framing, harness engineering (AGENTS.md), what stays human.
 

@@ -1,7 +1,10 @@
 # Parallel Agent Orchestration Resources
 
-Curated 2026-10-05. The patterns here outlive the tools; re-verify tool claims against the
-installed versions before teaching them.
+Curated 2026-10-05 · recency-audited 2026-10-07. The patterns here outlive the tools; re-verify
+tool claims against the installed versions before teaching them. Audit: DORA 2025 is still the
+latest annual report (no 2026 edition); hunk 0.23.0 is current; herdr 0.9.3 is latest (machine
+runs 0.8.2 — update between lessons); opencode v2 exists alongside the still-current v1 line —
+verify before the subagents lesson.
 
 ## Knowledge
 
@@ -20,28 +23,44 @@ installed versions before teaching them.
   quality, correctness. Use for: the working definition of your new role.
 
 ### The craft: how to orchestrate well
-- [Post: Simon Willison — “Embracing the parallel coding agent lifestyle” (Oct 2025)](https://simonwillison.net/2025/Oct/5/parallel-coding-agents/)
-  ★ The judgment layer: review bandwidth is the bottleneck; what actually parallelizes
-  (research, small maintenance, carefully specified work); what doesn’t. Use for: every
-  “should this be parallel?” decision. Lesson 0001’s primary source.
+- [Guide: Simon Willison — “Agentic Engineering Patterns” (living)](https://simonwillison.net/guides/agentic-engineering-patterns/) · [chapter: “Embracing the parallel coding agent lifestyle” (Oct 2025)](https://simonwillison.net/2025/Oct/5/parallel-coding-agents/)
+  ★ The judgment layer, maintained: review bandwidth is the bottleneck; what actually
+  parallelizes (research, small maintenance, carefully specified work); what doesn’t. The Oct
+  2025 post is now a chapter of the living guide. Use for: every “should this be parallel?”
+  decision. Lesson 0001’s primary source.
 - [Article: Anthropic — “Building effective agents” (2024)](https://www.anthropic.com/engineering/building-effective-agents)
   The canonical workflow/agent taxonomy, incl. orchestrator–workers. Use for: deciding
   *whether* a task needs agents and naming the pattern you’re using.
 - [Article: Anthropic — “How we built our multi-agent research system” (2025)](https://www.anthropic.com/engineering/multi-agent-research-system)
   Production orchestrator–worker case study: decomposition, parallel subagents, and the real
   token economics (multi-agent ≈ 15× chat tokens). Use for: delegation design and cost intuition.
+- [Post: Anthropic — “Building a C compiler with a team of parallel Claudes” (Feb 2026)](https://www.anthropic.com/engineering/building-c-compiler)
+  The capstone case study: ~16 agents, ~2,000 sessions, coordination via task-lock files and a
+  test oracle that keeps parallelism productive. Use for: the advanced end of the course.
+- [Posts: Anthropic — “Effective harnesses for long-running agents” (Nov 2025)](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) · [“Harness design for long-running application development” (Mar 2026)](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+  Initializer/coding agents, planner–generator–evaluator, sprint contracts, context resets, test
+  ratchets. Use for: harness engineering and why “write the done-condition first” is the
+  highest-leverage move (Lesson 0004’s deeper grounding).
 - [Article: Anthropic — “Claude Code: Best practices for agentic coding” (living doc)](https://www.anthropic.com/engineering/claude-code-best-practices)
   Verification loops, task scoping, context discipline, parallel sessions. Use for: almost any
   concrete “how do I brief/verify this” lesson; concepts transfer to opencode.
-- [Post: Cognition — “Don’t Build Multi-Agents” (2025)](https://cognition.com/blog/dont-build-multi-agents)
-  The essential counterpoint: naive parallel writer swarms fail because actions carry implicit
-  decisions and context isn’t shared. Use for: why writes stay isolated and verification gates exist.
+- [Post: Cognition — “Don’t Build Multi-Agents” (2025)](https://cognition.com/blog/dont-build-multi-agents) · [follow-up: “Multi-Agents: What’s Actually Working” (Apr 2026)](https://cognition.com/blog/multi-agents-working)
+  The essential pair. 2025: parallel writer swarms fail because actions carry implicit
+  decisions. 2026: what works is writes single-threaded while other agents contribute
+  *intelligence* (clean-context reviewer, smart friend, manager). Use for: why writes stay
+  isolated and verification gates exist — the theory behind Lessons 0002–0006.
 - [Post: Gergely Orosz — “New trend: programming by kicking off parallel AI agents” (Oct 2025)](https://blog.pragmaticengineer.com/new-trend-programming-by-kicking-off-parallel-ai-agents/)
   Counterpoint data: senior+ engineers benefit most (delegation/review skills transfer);
   review fatigue is real. Use for: keeping the course honest about downsides.
 - [Post: Mitchell Hashimoto — “My AI Adoption Journey” (2026)](https://mitchellh.com/writing/my-ai-adoption-journey)
   Origin of “harness engineering”: when an agent errs, fix its environment so the error can’t
   recur. Use for: the improvement-loop lesson.
+- [Post: Addy Osmani — “Agent Harness Engineering” (Apr 2026)](https://addyosmani.com/blog/agent-harness-engineering/)
+  Consolidates the harness vocabulary and the practice of turning every agent mistake into an
+  environment fix. Use for: harness engineering, alongside Hashimoto and Anthropic’s harness posts.
+- [Paper: MAST — “Why Do Multi-Agent LLM Systems Fail?” (arXiv 2503.13657)](https://arxiv.org/abs/2503.13657)
+  Taxonomy of multi-agent failure modes; reported benchmark gains often minimal. Use for: honest
+  “when not to parallelize” material.
 - [Talk: Karpathy — “Software Is Changing (Again)” (YC AI Startup School, 2025)](https://www.youtube.com/watch?v=LCEmiRjPEtQ)
   Software 3.0 framing: prompts as programs, LLMs as a new kind of computer, generation →
   verification loops. Use for: the big-picture why, in plain language.
@@ -95,5 +114,6 @@ installed versions before teaching them.
 - No high-quality primary source yet on **herdr-specific orchestration patterns** — it is
   young. Derive from its docs + local experimentation and record what works in learning records.
 - Review-technique gap **closed** (2026-10-07): JetBrains framework + GitHub guide + Analyst
-  Engineering now cover it. Remaining gap: a trusted source on **multi-agent review topologies**
-  (reviewer agents reviewing worker agents) — revisit for the agent-driven orchestration lesson.
+  Engineering now cover it. Multi-agent review topologies **partially closed** by Cognition’s
+  2026 follow-up (reviewer / manager / smart-friend patterns); still thin on *local*
+  reviewer-agent topologies on this machine — derive experimentally in Lesson 0007.
