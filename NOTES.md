@@ -79,7 +79,7 @@ learning evidence lives in `learning-records/`.
 4. ✅ completed — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; user authored, teacher critiqued, worker executed, runbook verified. Sandbox now has `sandbox/tools/repo-state.sh` (reuse in #5).
 5. ✅ completed — *The Fleet*: 3 agents under a WIP limit, one engineered `blocked` rescue (worked), sequential merge, retire. WIP=3 confirmed.
 6. ✅ completed — *Review Craft*: trust calibration + five moves; drill scored **2/3** (missed the `git diff --quiet` silent semantic gap). `reference/shell-review-primer.html` added; live hunk features (skill, inline comments, human notes) deferred to #7.
-7. ✅ built — *The Orchestrator*: skills install, manager brief (orchestrator drives worktree→agent start→prompt→wait→read), live hunk review driven by an agent, human accept.
+7. ✅ completed — *The Orchestrator*: skills installed, orchestrator drove worktree→start→prompt→wait→read, worker committed (`c05459a`, FF-merged), live hunk review driven by an agent. User named the recursion: “the orchestrator behaves like me.” opencode-native subagents still uncovered.
 8. *SE 3.0 in practice*: ACE/AEE framing, harness engineering (AGENTS.md), what stays human.
 
 ## Teaching conventions
