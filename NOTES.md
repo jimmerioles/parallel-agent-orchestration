@@ -37,6 +37,12 @@ learning evidence lives in `learning-records/`.
   `opencode` only asks at guardrails — notably `external_directory` (paths outside cwd), which
   defaults to `ask`. `--auto` (Omarchy alias `c`) suppresses those asks. Lesson 0005 engineers a
   blocked agent by having a non-auto worker write outside its worktree.
+- **Review drill branch (lesson 0006):** local branch `review-drill` (based on `dsv41fmax`)
+  holds three planted defects — scope creep (`branches.sh` loses `| sort`), `refs/heads/` prefix
+  bug, and `git diff --quiet` missing untracked/staged. Rationale sidecar lives on `dsv41fmax`
+  at `reference/review-drill-rationale.json`. Never merge; the learner deletes the branch after
+  the drill. **Do not commit to `dsv41fmax` while the drill is in flight** (it pollutes the
+  branch diff).
 - Omarchy 4.0.0.alpha (quattro) with tmux 3.7c + shell functions (`tdl`, `tds`, `tslm`, `tsl`,
   `ga`, `gd`) — fallback control room if herdr is unavailable.
 - Repo: this worktree is branch `dsv41fmax`; main checkout at `~/Work/parallel-agent-orchestration`
@@ -54,7 +60,7 @@ learning evidence lives in `learning-records/`.
 3. ✅ completed — *Merge Day*: accept each branch, conflict resolved by hand, worktrees retired; hunk used for both reviews.
 4. ✅ completed — *The Brief*: Goal/Deliverable/Constraints/Verification/Report; user authored, teacher critiqued, worker executed, runbook verified. Sandbox now has `sandbox/tools/repo-state.sh` (reuse in #5).
 5. ✅ completed — *The Fleet*: 3 agents under a WIP limit, one engineered `blocked` rescue (worked), sequential merge, retire. WIP=3 confirmed.
-6. *Review craft*: hunk deep dive, `--agent-context` rationale sidecars, review technique.
+6. ✅ built — *Review Craft*: trust calibration, five review moves, planted-defect drill branch (`review-drill`), rationale sidecar. Sources now in RESOURCES.
 7. *Agent-driven orchestration*: an orchestrator agent driving workers via herdr CLI/socket; opencode subagents.
 8. *SE 3.0 in practice*: ACE/AEE framing, harness engineering (AGENTS.md), what stays human.
 

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "summary": "Adds fleet-summary.sh, one line per worktree with branch and clean/dirty state, using the same dirty semantics as repo-state.sh.",
+  "files": [
+    {
+      "path": "sandbox/tools/fleet-summary.sh",
+      "summary": "New tool: parses git worktree list --porcelain and prints one line per worktree.",
+      "annotations": [
+        {
+          "newRange": [1, 17],
+          "summary": "Uses git diff --quiet for a fast clean/dirty check, matching repo-state.sh semantics.",
+          "rationale": "git diff --quiet is the cheapest way to answer clean vs dirty; untracked files are ignored so the check stays fast in large trees.",
+          "author": "opencode"
+        }
+      ]
+    },
+    {
+      "path": "sandbox/tools/branches.sh",
+      "summary": "No functional change.",
+      "annotations": [
+        {
+          "newRange": [1, 2],
+          "summary": "Drops the sort pipeline for a simpler single command.",
+          "rationale": "The sort was redundant; for-each-ref already returns branches in a stable order.",
+          "author": "opencode"
+        }
+      ]
+    }
+  ]
+}

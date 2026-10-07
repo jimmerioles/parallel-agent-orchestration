@@ -46,6 +46,23 @@ installed versions before teaching them.
   Software 3.0 framing: prompts as programs, LLMs as a new kind of computer, generation →
   verification loops. Use for: the big-picture why, in plain language.
 
+### The review (the bottleneck skill)
+- [Study: JetBrains Research — “Our Framework for Reviewing AI-Generated Code” (Oct 2026)](https://blog.jetbrains.com/research/2026/10/review-ai-generated/)
+  ★ The reframe: reviewing agent output “is not a diffing problem, but a trust-calibration
+  problem”; three-level workflow (overview → files → lines, risk-stratified). Use for: Lesson
+  0006’s core idea and every future review decision.
+- [Guide: GitHub — “Review AI-generated code”](https://docs.github.com/en/copilot/tutorials/review-ai-generated-code)
+  Practical checklist: functional checks first, verify intent/context, scrutinize dependencies,
+  spot AI-specific pitfalls (deleted/skipped tests, hallucinated APIs), automate the mechanical.
+  Use for: the five moves and future review drills.
+- [Article: Analyst Engineering — “Code Review When AI Wrote the Diff” (2026)](https://www.analystengineering.com/articles/reviewing-ai-generated-code)
+  Fixed review order (intent → tests → boundaries → failure paths → security → fit); “run it,
+  don’t just read it”; small diffs; PR descriptions that answer the reviewer. Use for: review
+  discipline and diff-size limits.
+- [Report: DORA — State of AI-assisted Software Development 2025](https://dora.dev/research/2025/dora-report/)
+  Evidence base: 90% adoption, 30% low/no trust, instability rises without control systems.
+  Use for: the “why review discipline” frame with real numbers.
+
 ### The tools on this machine
 - [Docs: herdr — concepts](https://herdr.dev/docs/concepts/) · [agents](https://herdr.dev/docs/agents/) · [agent automation](https://herdr.dev/docs/agent-automation/)
   Primary source for the control room: session → workspace → tab → pane → agent; states
@@ -77,6 +94,6 @@ installed versions before teaching them.
 ## Gaps
 - No high-quality primary source yet on **herdr-specific orchestration patterns** — it is
   young. Derive from its docs + local experimentation and record what works in learning records.
-- No trusted source on **review technique itself** (reading agent diffs fast without
-  rubber-stamping). Partially addressed: `hunk --agent-context` (agent rationale sidecars) is a
-  technique lead; research properly when a lesson needs review craft.
+- Review-technique gap **closed** (2026-10-07): JetBrains framework + GitHub guide + Analyst
+  Engineering now cover it. Remaining gap: a trusted source on **multi-agent review topologies**
+  (reviewer agents reviewing worker agents) — revisit for the agent-driven orchestration lesson.

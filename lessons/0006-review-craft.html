@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 0006 — Review Craft</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+<style>
+  /* One-off for this lesson: reveal blocks */
+  details.reveal {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    margin: 1.4rem 0;
+    background: var(--code-bg);
+  }
+  details.reveal summary {
+    cursor: pointer;
+    font-family: ui-sans-serif, system-ui, "DejaVu Sans", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  details.reveal[open] summary { margin-bottom: 0.8rem; }
+  details.reveal ol { margin-bottom: 0; }
+  details.reveal li { margin-bottom: 0.6rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0005-the-fleet.html">← Lesson 0005</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Lesson 0006 · ~20 minutes · hands-on drill</p>
+  <h1>Review Craft</h1>
+  <p class="subtitle">Trust calibration: spend your attention where the risk is — not evenly across the diff.</p>
+
+  <h2>The one idea</h2>
+
+  <p>Review is the bottleneck of everything you’ve built (Lesson 0001’s law) — and AI-authored
+  diffs break the assumptions old review habits were built on. There is no author to
+  interrogate, no hesitant naming, no “not sure about this” comment. Generated code arrives
+  <em>uniformly fluent and uniformly confident</em>, whether it is right or wrong. A JetBrains
+  Research study with Lund University puts it sharply: reviewing agent output “is not a diffing
+  problem, but a <strong>trust-calibration problem</strong>” — knowing where to look hard and
+  where you can afford to skim
+  (<a href="https://blog.jetbrains.com/research/2026/10/review-ai-generated/">JetBrains, Oct 2026</a>).</p>
+
+  <p>The stakes are measurable. DORA’s 2025 report: 90% of developers use AI, but 30% report
+  little or no trust in its output, and AI adoption correlates with <em>higher delivery
+  instability</em> unless control systems — tests, version control, fast feedback, review —
+  absorb the extra volume (<a href="https://dora.dev/research/2025/dora-report/">DORA 2025</a>).
+  Simon Willison’s list of what LLMs reward starts with “a culture of code review”: if you’re
+  fast and good at review, agentic work pays off
+  (<a href="https://simonwillison.net/2025/Oct/7/vibe-engineering/">Vibe engineering, 2025</a>).</p>
+
+  <p class="sidenote">Rubber-stamping is the failure mode: approving fast, running nothing,
+  asking nothing. It feels like productivity and behaves like a silent lost update — at the
+  level of whole changesets.</p>
+
+  <h2>The five moves</h2>
+
+  <table>
+    <tr><th>Move</th><th>What you do</th><th>Failure it kills</th></tr>
+    <tr><td><b>1 · Intent first</b></td><td>Reread the brief, then <code>git diff --stat</code>. Does the file list match the brief — nothing extra, nothing missing? If it surprises you, stop and ask before reading code.</td><td>Scope creep; a beautiful diff solving the wrong problem.</td></tr>
+    <tr><td><b>2 · Verify before inspect</b></td><td>Run the acceptance command from the brief <em>first</em>. Red? Send it back — don’t spend review on a failing change.</td><td>Reviewing the wrong revision; wasting attention.</td></tr>
+    <tr><td><b>3 · Overview → files → lines</b></td><td>Start in hunk’s sidebar: how many files, how big, what kind? Stratify risk before reading a line.</td><td>Line-by-line audits that scale terribly.</td></tr>
+    <tr><td><b>4 · Read risk-first</b></td><td>Where does plausible-but-wrong hide? Deletions, changed tests, swallowed errors (<code>2&gt;/dev/null</code>, bare <code>catch</code>), invented APIs, silent defaults, new dependencies.</td><td>The confident lie — code that looks reviewed already.</td></tr>
+    <tr><td><b>5 · Run it, don’t just read it</b></td><td>Execute the change against an edge case you chose. Ten minutes running beats thirty minutes reading (<a href="https://www.analystengineering.com/articles/reviewing-ai-generated-code">Analyst Engineering</a>).</td><td>Bugs that only appear at runtime.</td></tr>
+  </table>
+
+  <p class="sidenote">Sources for the moves: JetBrains’ three-level workflow (overview before
+  files, files before lines); GitHub’s <a href="https://docs.github.com/en/copilot/tutorials/review-ai-generated-code">“Review
+  AI-generated code”</a> (functional checks first, spot AI-specific pitfalls); Analyst
+  Engineering (intent → tests → code, then run it).</p>
+
+  <h2>The review seat: hunk</h2>
+
+  <p>You’ve used hunk twice; this lesson adds its two review-craft features:</p>
+  <ul>
+    <li><strong>Rationale sidecars.</strong> An agent can ship a JSON file of notes and
+    rationale next to its diff: <code>hunk diff &lt;base&gt; &lt;branch&gt; --agent-context notes.json</code>.
+    Treat every note as a <em>claim to verify</em>, never as evidence.</li>
+    <li><strong>Watch mode</strong> (<code>hdw</code>): review as the working tree changes —
+    useful when you and an agent iterate on the same change.</li>
+  </ul>
+
+  <h2>The drill: a branch lands on your desk</h2>
+
+  <p>A local branch <code>review-drill</code> exists in this repo. The brief that supposedly
+  produced it:</p>
+
+  <div class="note">
+    <span class="label">The brief it was built from</span>
+    <p>“Add <code>sandbox/tools/fleet-summary.sh</code>: one line per git worktree, formatted
+    <code>&lt;branch&gt; &lt;clean|dirty&gt;</code>, using the same dirty semantics as
+    <code>sandbox/tools/repo-state.sh</code>. Do not modify any other file.”</p>
+  </div>
+
+  <p>It contains <strong>three planted defects</strong>. Find them before you reveal the
+  answers.</p>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Review it cold.</strong> From your shell tab:</p>
+        <div class="brief" id="drill-cmd">hunk diff dsv41fmax review-drill<button class="copy-btn" data-copy="#drill-cmd">Copy</button></div>
+        <p>Work the five moves in order. Write down each defect you find and <em>which move
+        caught it</em>. Do not read ahead.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Now add the agent’s rationale</strong> — the notes it shipped beside the diff:</p>
+        <div class="brief" id="drill-context">hunk diff dsv41fmax review-drill --agent-context reference/review-drill-rationale.json<button class="copy-btn" data-copy="#drill-context">Copy</button></div>
+        <p>Compare its claims against what you found. Which claims are true, and which are
+        <em>confident and false</em>? This is the whole lesson in one screen.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Reveal and score yourself</strong> — only after you’ve written your three
+        findings.</p>
+      </span>
+    </li>
+  </ol>
+
+  <details class="reveal">
+    <summary>Reveal the three planted defects</summary>
+    <ol>
+      <li><strong>Scope creep:</strong> the diff also edits <code>branches.sh</code> — dropping
+      <code>| sort</code>, silently breaking its “sorted” contract. <em>Caught by move 1:
+      <code>git diff --stat</code> shows a file the brief never mentioned.</em> The rationale
+      calls it “redundant” — a claim, not a reason.</li>
+      <li><strong>Wrong output:</strong> the script prints
+      <code>refs/heads/dsv41fmax</code>, not <code>dsv41fmax</code>. Porcelain output gives
+      full ref names, and the script never strips the prefix. <em>Caught by move 5: run it.
+      Also visible in move 4 if you read the parsing closely.</em></li>
+      <li><strong>Silent semantic gap:</strong> it uses <code>git diff --quiet</code>, which
+      misses <strong>untracked</strong> and <strong>staged</strong> changes — so it says
+      <code>clean</code> where <code>repo-state.sh</code> says <code>dirty</code>, breaking the
+      brief’s “same dirty semantics” clause. <em>Caught by move 4 (read risk-first) or by
+      cross-checking against the reference tool from move 5.</em> The rationale literally
+      states the flaw as a feature (“untracked files are ignored so the check stays fast”).</li>
+    </ol>
+  </details>
+
+  <p><strong>Clean up the drill branch when done</strong> (it was never meant to merge):</p>
+  <div class="brief" id="drill-clean">git branch -D review-drill<button class="copy-btn" data-copy="#drill-clean">Copy</button></div>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p>You found all three defects <em>before</em> revealing them, and you can name the move
+    that catches each. Bonus: you spotted that every false rationale was more confident than
+    the true one.</p>
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz">
+    <p class="q">What is the goal when reviewing AI-generated code?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Trust calibration, not line-auditing</button>
+      <button class="option">Reading every single line equally</button>
+      <button class="option">Approving changes as fast as possible</button>
+      <button class="option">Running the whole test suite</button>
+    </div>
+    <p class="explain">Uniform confidence means equal-depth reading doesn’t scale. Allocate
+    effort by risk: hard where it matters, skim where it doesn’t.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What should you do before reading a single line?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Run the acceptance check first</button>
+      <button class="option">Ask the agent to explain</button>
+      <button class="option">Read the tests carefully</button>
+      <button class="option">Check the commit message text</button>
+    </div>
+    <p class="explain">Verify before inspect: a failing change goes back, not through a
+    line-by-line review. The acceptance command is your first filter.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Which is an AI-specific review red flag?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Tests edited until they pass</button>
+      <button class="option">Small diffs with clear intent</button>
+      <button class="option">Named branches for each task</button>
+      <button class="option">Verification commands in the brief</button>
+    </div>
+    <p class="explain">A test changed to go green without a requirement change removes evidence.
+    Block on it, whoever or whatever wrote it.</p>
+  </div>
+
+  <h2>Before next time</h2>
+
+  <p><strong>Primary source (15 minutes):</strong>
+  <a href="https://blog.jetbrains.com/research/2026/10/review-ai-generated/">JetBrains Research —
+  “Our Framework for Reviewing AI-Generated Code.”</a> It names the paradigm shift you practised
+  today (diff-view → trust calibration) and proposes the overview → files → lines workflow you
+  used in the drill.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>Tell me your score: which defects did you catch, which slipped, and which move felt
+    unnatural. Review style is personal — I’ll shape the next drill around your blind spots.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>Next lesson: <em>Agent-Driven Orchestration</em> — an orchestrator agent that drives
+    workers for you, via herdr’s CLI and opencode subagents.</p>
+  </div>
+
+</div>
+</body>
+</html>

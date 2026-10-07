@@ -93,3 +93,10 @@ you), then `idle`/`done` for review, and `working` last (leave them alone).
 _Avoid_: “checking on agents”
 _Source_: herdr agent-state model
 _Taught_: [Lesson 0005](lessons/0005-the-fleet.html)
+
+**Trust calibration**:
+Allocating review effort in proportion to risk, because agent-authored changes arrive uniformly
+confident and there is no author to interrogate. The core review skill for AI-generated code.
+_Avoid_: “code review”, “spot-checking”
+_Source_: [JetBrains Research, Oct 2026](https://blog.jetbrains.com/research/2026/10/review-ai-generated/)
+_Taught_: [Lesson 0006](lessons/0006-review-craft.html)

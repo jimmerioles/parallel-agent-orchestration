@@ -95,7 +95,17 @@
   </table>
   <p class="sidenote">Aliases: <code>hdw</code> = <code>hunk diff --watch</code> (live review
   while agents work); <code>hsa</code> = diff against the empty tree (every change). Built for
-  agent-authored changesets; <code>--agent-context</code> reads a JSON rationale sidecar.</p>
+  agent-authored changesets; <code>--agent-context</code> reads a JSON rationale sidecar —
+  claims to verify, not evidence.</p>
+
+  <h2>Review moves</h2>
+  <ol class="compact">
+    <li><b>Intent first</b> — brief, then <code>git diff --stat</code>; scope surprises end the review early.</li>
+    <li><b>Verify before inspect</b> — run the acceptance command; red goes back.</li>
+    <li><b>Overview → files → lines</b> — hunk sidebar first; stratify risk.</li>
+    <li><b>Read risk-first</b> — deletions, changed tests, swallowed errors, new deps, invented APIs.</li>
+    <li><b>Run it, don’t just read it</b> — execute an edge case you chose.</li>
+  </ol>
 
   <h2>Fleet ops</h2>
   <ul class="compact">
