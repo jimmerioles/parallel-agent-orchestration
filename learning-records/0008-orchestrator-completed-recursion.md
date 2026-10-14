@@ -15,6 +15,12 @@ brief → delegate → verify → accept loop applies one level up, to orchestra
 precisely the SASE duality (SE for Humans / SE for Agents) in their own vocabulary, and it is the
 conceptual capstone of the course.
 
+Trust-calibration datapoint (same debrief): asked what changed in the agent-steered review, they
+answered that they **understood the changes more quickly due to the agent notes** — and that they
+**trusted the changes quite more**. The first is the feature; the second is the risk (rationale
+is a claim, not evidence; the notes came from the same agent family). Lesson 0008 must name this
+explicitly and the AGENTS.md convention should encode it.
+
 Implications for future sessions:
 - Lesson 0008 (*SE 3.0 in Practice*) can open at the level they just reached: harness engineering,
   what stays human, and the recursion they named. No need to re-explain orchestration basics.
