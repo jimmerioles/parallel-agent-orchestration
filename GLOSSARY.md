@@ -129,3 +129,11 @@ a skill — so the error cannot recur, rather than correcting the output each ti
 _Avoid_: “prompt tweaking”, “retrying”
 _Source_: [Hashimoto, 2026](https://mitchellh.com/writing/my-ai-adoption-journey); [Osmani, 2026](https://addyosmani.com/blog/agent-harness-engineering/)
 _Taught_: [Lesson 0008](lessons/0008-se3-in-practice.html)
+
+**Subagent**:
+An in-process helper agent a primary agent can invoke (or you can @-mention): its own clean
+context, permissions, and model; it returns a distilled summary rather than a full session. The
+cheapest way to add a reader; writes stay with primary agents or worktree workers.
+_Avoid_: “child agent” (that is the session), “worker” (that is a herdr pane)
+_Source_: [opencode docs](https://opencode.ai/docs/agents/)
+_Taught_: [Bonus — Subagents](lessons/0009-subagents.html)

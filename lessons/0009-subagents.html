@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonus — Subagents</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<script src="../assets/lesson.js" defer></script>
+</head>
+<body>
+<div class="page">
+
+  <nav class="lesson-nav">
+    <span><a href="../lessons/0008-se3-in-practice.html">← Lesson 0008</a></span>
+    <span><a href="../reference/herdr-control-room.html">Control-room card →</a></span>
+  </nav>
+
+  <p class="kicker">Bonus lesson · ~15 minutes · hands-on</p>
+  <h1>Subagents</h1>
+  <p class="subtitle">The in-process fleet: a clean-context reviewer you @-mention.</p>
+
+  <h2>The one idea</h2>
+
+  <p>Everything so far ran agents as <em>separate terminals</em>. opencode has a second kind of
+  parallelism built in: <strong>subagents</strong> — helpers a primary agent can spawn, each with
+  its own clean context, its own permissions, and its own model, returning only a distilled
+  summary (<a href="https://opencode.ai/docs/agents/">opencode docs</a>).</p>
+
+  <p>You already have three built-in subagents: <code>general</code> (multi-step work),
+  <code>explore</code> (fast, read-only codebase search), and <code>scout</code> (external docs
+  and dependency research). And you can add your own — which is the clean-context reviewer
+  Cognition describes: “a reviewer reads a diff and flags the bugs the coder can’t see”
+  (<a href="https://cognition.com/blog/multi-agents-working">2026</a>). It’s the cheapest way to
+  add intelligence, because no terminal, worktree, or merge is involved.</p>
+
+  <h2>Where agents live</h2>
+
+  <table>
+    <tr><th>Scope</th><th>Path</th><th>Use for</th></tr>
+    <tr><td>Global</td><td><code>~/.config/opencode/agents/</code></td><td>Agents you want everywhere</td></tr>
+    <tr><td><b>Project</b></td><td><code>.opencode/agents/</code> (in the repo)</td><td>Agents this project’s harness needs — committed, inherited by future agents</td></tr>
+  </table>
+  <p class="sidenote">The markdown filename becomes the agent name, so
+  <code>reviewer.md</code> is invoked as <code>@reviewer</code>. Frontmatter carries
+  <code>description</code>, <code>mode: subagent</code>, <code>permission</code>,
+  <code>model</code>, and <code>temperature</code>.</p>
+
+  <p>We’ll create a <strong>project-scoped</strong> reviewer: it becomes part of this repo’s
+  environment (Lesson 0008’s capstone in action), and it can only ever read.</p>
+
+  <h2>Part 1 · Create the reviewer</h2>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Write the agent file.</strong> In your shell tab, create
+        <code>.opencode/agents/reviewer.md</code> with exactly this:</p>
+        <div class="brief" id="reviewer-md">---
+description: Clean-context code reviewer. Read-only. Reviews diffs and changesets for defects, risk, and missing verification.
+mode: subagent
+temperature: 0.1
+permission:
+  edit: deny
+  task: deny
+  webfetch: deny
+  websearch: deny
+  bash:
+    "*": deny
+    "git *": allow
+    "rg *": allow
+    "grep *": allow
+    "ls *": allow
+    "cat *": allow
+    "sed *": allow
+    "head *": allow
+    "tail *": allow
+    "wc *": allow
+    "find *": allow
+    "test *": allow
+    "./sandbox/tools/*": allow
+---
+You are a meticulous code reviewer with a clean context: you did not write this code.
+
+Review the requested changeset or files. For every finding report:
+- file:line
+- what is wrong
+- why it matters (consequence, not opinion)
+- how to verify it (the exact command)
+
+Order findings by severity (blocker, major, minor). Run the code where permissions allow it — reading is not enough. If the change is clean, say so plainly and name the single riskiest thing you saw. End with a verdict: ACCEPT or REQUEST CHANGES. Do not modify any file.<button class="copy-btn" data-copy="#reviewer-md">Copy</button></div>
+        <p class="step-hint"><b>Tooling note:</b> the intended path is
+        <code>opencode agent create</code>, but on this machine it currently fails —
+        <code>Request is missing x-opencode-session</code> (a routing bug in the
+        <code>opencode-go</code> provider when it generates the prompt outside a session).
+        Writing the file produces the same result; report the bug in the community step.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Start a fresh opencode session</strong> — agents load at session start. Split a
+        pane (<kbd>ctrl</kbd>+<kbd>space</kbd> then <kbd>v</kbd>) and run <kbd>c</kbd>. The old
+        panes won’t see the new agent.</p>
+      </span>
+    </li>
+  </ol>
+
+  <h2>Part 2 · Point it at real work</h2>
+
+  <ol class="steps" style="counter-reset: step 2">
+    <li class="step">
+      <span class="step-body">
+        <p><strong>@-mention it</strong> with a genuine review task — your own toolkit:</p>
+        <div class="brief" id="invoke-reviewer">@reviewer Review the toolkit in sandbox/tools/ (repo-state.sh, worktrees.sh, branches.sh, agents.sh, worktree-count.sh). Run each one, check its parsing and error handling against the shell-review primer's rules, and report findings by severity with file:line and a verdict.<button class="copy-btn" data-copy="#invoke-reviewer">Copy</button></div>
+        <p class="step-hint">Subagents are read-only here: <code>edit: deny</code> blocks every
+        write, and bash is denied except the read-only commands plus running your tools. It
+        physically cannot touch the repo.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Watch the child session.</strong> The subagent runs as a <em>child</em> of the
+        current session, in-process — it does <em>not</em> appear in herdr’s sidebar, because it
+        isn’t a separate terminal. Enter it with the <code>session_child_first</code> binding
+        (Leader + Down by default), cycle children with Right/Left, return with Up. It hands back
+        a distilled summary, not a transcript.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Weigh its findings against your own.</strong> You reviewed the toolkit family
+        before; did the clean-context reviewer catch anything you missed — or claim anything
+        false? Same rule as always: its notes are claims.</p>
+      </span>
+    </li>
+
+    <li class="step">
+      <span class="step-body">
+        <p><strong>Commit the agent — it’s harness now:</strong></p>
+        <div class="brief" id="commit-agent">git add .opencode/agents/reviewer.md
+hunk diff --staged
+git commit -m "chore: add project reviewer subagent"<button class="copy-btn" data-copy="#commit-agent">Copy</button></div>
+      </span>
+    </li>
+  </ol>
+
+  <div class="win">
+    <span class="label">You’ve won when</span>
+    <p><code>@reviewer</code> produced a severity-ordered review of your toolkit with a verdict,
+    you watched it run as a child session, and <code>.opencode/agents/reviewer.md</code> is
+    committed — so every future agent in this repo inherits a read-only reviewer.</p>
+  </div>
+
+  <h2>Subagent or herdr worker?</h2>
+
+  <table>
+    <tr><th></th><th>Subagent</th><th>Herdr worker</th></tr>
+    <tr><td>Runs</td><td>In-process, as a child session</td><td>Own terminal pane, own workspace</td></tr>
+    <tr><td>Context</td><td>Fresh, isolated; returns a summary</td><td>Full session you can read and steer</td></tr>
+    <tr><td>State</td><td>Not in the sidebar</td><td>Visible state: working/blocked/done</td></tr>
+    <tr><td>Best for</td><td>Read-heavy fan-out: search, explore, review</td><td>Writes, long tasks, model mix, triage</td></tr>
+  </table>
+  <p class="sidenote">Both obey the same law: extra agents contribute <em>intelligence</em>;
+  writes stay single-threaded. Reach for a subagent when the work is reading; reach for a
+  worktree worker when something must be written and merged.</p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz">
+    <p class="q">How do you invoke a subagent manually?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Mention it with @</button>
+      <button class="option">Split a fresh pane</button>
+      <button class="option">Create a new worktree</button>
+      <button class="option">Commit it to main</button>
+    </div>
+    <p class="explain">Type <code>@reviewer</code> (or let the primary agent invoke it via the
+    task tool). Subagents can also be invoked automatically based on their description.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What does mode subagent mean?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Primary agents can invoke it</button>
+      <button class="option">Only humans can invoke it</button>
+      <button class="option">It replaces the build agent</button>
+      <button class="option">It runs without any model</button>
+    </div>
+    <p class="explain">Primary agents (build, plan) call subagents for focused work; you can also
+    @-mention one directly. <code>mode: all</code> would make it usable both ways.</p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">What does edit deny do for the reviewer?</p>
+    <div class="options">
+      <button class="option" data-correct="true">Blocks all file modifications</button>
+      <button class="option">Blocks all bash commands</button>
+      <button class="option">Blocks reading the files</button>
+      <button class="option">Blocks spawning subagents</button>
+    </div>
+    <p class="explain">It gates write/edit/patch — the reviewer can read and run allowed
+    commands but physically cannot change your repo. Least privilege, enforced by the harness.</p>
+  </div>
+
+  <h2>Primary source</h2>
+
+  <p><strong>Read (10 minutes):</strong>
+  <a href="https://opencode.ai/docs/agents/">opencode — Agents</a>. The whole config surface:
+  primary vs subagent, built-ins, markdown vs JSON, permissions, task permissions, and the
+  <code>opencode agent create</code> wizard.</p>
+
+  <div class="note">
+    <span class="label">Ask your teacher</span>
+    <p>If the child-session navigation or the permissions surprise you, bring it here. And if
+    <code>opencode agent create</code> gets fixed, tell me — the lesson should switch back to the
+    wizard.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Keepsakes:</strong>
+    <a href="../reference/herdr-control-room.html">The herdr Control-Room Card</a> ·
+    <a href="../reference/shell-review-primer.html">Shell-diff review primer</a> ·
+    <a href="../GLOSSARY.md">Glossary</a> ·
+    <a href="../RESOURCES.md">Resources</a></p>
+    <p>This is a bonus beyond the eight-lesson arc:
+    <a href="../lessons/0008-se3-in-practice.html">← SE 3.0 in Practice</a> ·
+    <a href="../lessons/0007-the-orchestrator.html">The Orchestrator</a>.</p>
+  </div>
+
+</div>
+</body>
+</html>

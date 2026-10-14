@@ -130,6 +130,15 @@
   <p class="sidenote">Skills (loaded at session start): <code>herdr --skill &gt; ~/.agents/skills/herdr/SKILL.md</code> ·
   <code>ln -sf "$(hunk skill path)" ~/.agents/skills/hunk-review/SKILL.md</code></p>
 
+  <h2>Subagents (opencode)</h2>
+  <ul class="compact">
+    <li><b>Where:</b> global <code>~/.config/opencode/agents/</code> · project <code>.opencode/agents/</code> (filename = agent name).</li>
+    <li><b>Invoke:</b> <code>@name</code> in a message; primary agents can also call them via the task tool.</li>
+    <li><b>Read-only reviewer:</b> <code>mode: subagent</code>, <code>edit: deny</code>, granular <code>bash</code> allow-list.</li>
+    <li><b>Child sessions:</b> Leader+Down to enter · Right/Left to cycle · Up to return. Not in the herdr sidebar.</li>
+    <li><b>Note:</b> <code>opencode agent create</code> is currently broken here (<code>x-opencode-session</code> routing error) — write the markdown directly.</li>
+  </ul>
+
   <h2>When something looks wrong</h2>
   <ul class="compact">
     <li>Agent state wrong? <code>herdr agent list</code>, then <code>herdr agent explain &lt;target&gt;</code>.</li>

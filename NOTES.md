@@ -19,7 +19,7 @@ learning evidence lives in `learning-records/`.
 ## Machine facts (verified 2026-10-05)
 - `herdr 0.8.2` server+client running; `HERDR_ENV=1` inside panes. Docs are at 0.9.3 — verify
   version-sensitive claims locally.
-- This session: workspace `w1Y`, pane `w1Y:p1`, opencode 1.18.34, cwd = this worktree.
+- This session: workspace `w1Y`, pane `w1Y:p1`, opencode 1.19.0, cwd = this worktree.
 - opencode herdr integration **installed and current (v10)** → native state reporting.
   claude/codex/gemini integrations are *not* installed (screen detection only).
 - herdr prefix = `ctrl+space`. Splits: `prefix v` / `alt+shift+enter` = right;
@@ -45,9 +45,13 @@ learning evidence lives in `learning-records/`.
   pollutes the diff).
 - **Resource recency audit (2026-10-07):** DORA 2025 still latest (no 2026 edition); hunk 0.23.0
   current; herdr 0.9.3 latest (machine 0.8.2 — update between lessons, re-verify card); opencode
-  v1.18.35 current on the v1 line, **v2 exists** — verify config/agents against v2 before the
-  subagents lesson. RESOURCES updated: Cognition 2026 sequel, Anthropic harness series +
+  now **1.19.0** on the still-current v1 line (**v2 exists**) — verify config/agents before the
+  subagents work. RESOURCES updated: Cognition 2026 sequel, Anthropic harness series +
   C-compiler capstone, Willison living guide, Osmani harness engineering, MAST counter-evidence.
+- **`opencode agent create` broken (2026-10-07):** fails with `Request is missing
+  x-opencode-session` (opencode-go routing) when it generates the agent prompt outside a session.
+  Write agent markdown directly. Project agents: `.opencode/agents/<name>.md` (filename = agent
+  name). Candidate upstream bug to report in the community step.
 - **User preference (2026-10-07):** wants hunk’s differentiated features used — bundled review
   skill (`hunk skill path`), live agent comments (`hunk session ...`), human notes. Fold into
   Lesson 0007 as the reviewer-agent workflow. **Done: built into Lesson 0007.**
@@ -86,6 +90,11 @@ learning evidence lives in `learning-records/`.
 criteria met (see [[learning-records/0009-course-complete.md]]). Next options: bonus subagents
 session · apply to a real project (revisit the sandbox constraint) · graduate `dsv41fmax` →
 `master`.
+
+**Bonus 9 ✅ built — Subagents:** project-scoped read-only reviewer at `.opencode/agents/reviewer.md`,
+`@reviewer` invocation, child sessions, subagent-vs-worker comparison. User chose project scope
+and wanted the `opencode agent create` command used — it is **broken on this machine**, so the
+lesson writes the markdown directly (documented in the lesson).
 
 ## Teaching conventions
 - Quiz options matched in word count; immediate feedback; retrieval from memory.
