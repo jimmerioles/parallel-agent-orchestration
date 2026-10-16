@@ -14,11 +14,16 @@ bug for the community step.
 
 Implications:
 - The reviewer agent is now part of the repo harness; future sessions inherit it.
-- Pending detail: which finding it was, and whether it was true (trust calibration — verify the
-  claim, don’t just accept it). Candidate real defects in the toolkit, for matching against the
-  report: `branches.sh` is the only tool missing `set -euo pipefail`; `worktree-count.sh`’s
-  `grep -c` exits 1 on zero matches under `set -e`; `worktrees.sh` prints an empty branch field
-  on detached HEAD.
-- Next: graduate the course branch (fast-forward `dsv41fmax` → `master`), then a real project.
+- **Verified (2026-10-16): every finding held.** The user checked each claim and confirmed they
+  were all true — the clean-context reviewer caught real defects the author had missed. Crucially
+  they verified rather than accepting on plausibility, which is the trust-calibration discipline
+  from Lesson 0006 working end-to-end: the reviewer contributes intelligence, the human decides.
+- Candidate defects present in the toolkit (matching the pattern the reviewer would flag):
+  `branches.sh` is the only tool missing `set -euo pipefail`; `worktree-count.sh`’s `grep -c`
+  exits 1 on zero matches under `set -e`; `worktrees.sh` prints an empty branch field on
+  detached HEAD.
+- Graduated and published (2026-10-16): `master` fast-forwarded to the course head; public repo
+  at https://github.com/jimmerioles/parallel-agent-orchestration with a README. Door 1 (real
+  project) parked at the user’s request.
 
 Evidence: `8751c42`, `.opencode/agents/reviewer.md`, user debrief.

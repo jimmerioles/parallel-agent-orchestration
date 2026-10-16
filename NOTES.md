@@ -70,8 +70,8 @@ learning evidence lives in `learning-records/`.
 - Repo: this worktree is branch `dsv41fmax`; main checkout at `~/Work/parallel-agent-orchestration`
   (branch `master`). Workspace files stay on this branch until merged.
 - **Public repo (2026-10-16):** https://github.com/jimmerioles/parallel-agent-orchestration —
-  `master` pushed, `origin` set on the main checkout. The `gh` issue-tracker convention in
-  `AGENTS.md` is now live. `dsv41fmax` is not pushed (local-only working branch).
+  `master` pushed, `origin` set on the main checkout, `README.md` added. The `gh` issue-tracker
+  convention in `AGENTS.md` is now live. `dsv41fmax` is not pushed (local-only working branch).
 - **Worktree quirk (verified 2026-10-05):** `herdr worktree create` refuses to run from a linked
   worktree — error `linked_worktree_source`, “start from the repo parent workspace.” Verified
   workaround from inside this worktree: `--cwd /home/jimmerioles/Work/parallel-agent-orchestration`
@@ -96,8 +96,9 @@ session · apply to a real project (revisit the sandbox constraint) · graduate 
 
 **Bonus 9 ✅ completed — Subagents:** project-scoped read-only reviewer at `.opencode/agents/reviewer.md`
 (`8751c42`), `@reviewer` invocation, child sessions, subagent-vs-worker comparison. The
-clean-context reviewer **caught something the user missed** (finding TBD — see LR 0010).
-`opencode agent create` is broken on this machine; the lesson writes the markdown directly.
+clean-context reviewer caught defects the user missed, and **all findings verified true**
+(2026-10-16) — the reviewer pattern validated end-to-end. `opencode agent create` is broken on
+this machine; the lesson writes the markdown directly.
 
 ## Teaching conventions
 - Quiz options matched in word count; immediate feedback; retrieval from memory.
