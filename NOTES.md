@@ -91,10 +91,10 @@ criteria met (see [[learning-records/0009-course-complete.md]]). Next options: b
 session · apply to a real project (revisit the sandbox constraint) · graduate `dsv41fmax` →
 `master`.
 
-**Bonus 9 ✅ built — Subagents:** project-scoped read-only reviewer at `.opencode/agents/reviewer.md`,
-`@reviewer` invocation, child sessions, subagent-vs-worker comparison. User chose project scope
-and wanted the `opencode agent create` command used — it is **broken on this machine**, so the
-lesson writes the markdown directly (documented in the lesson).
+**Bonus 9 ✅ completed — Subagents:** project-scoped read-only reviewer at `.opencode/agents/reviewer.md`
+(`8751c42`), `@reviewer` invocation, child sessions, subagent-vs-worker comparison. The
+clean-context reviewer **caught something the user missed** (finding TBD — see LR 0010).
+`opencode agent create` is broken on this machine; the lesson writes the markdown directly.
 
 ## Teaching conventions
 - Quiz options matched in word count; immediate feedback; retrieval from memory.
