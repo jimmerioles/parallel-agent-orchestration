@@ -68,7 +68,10 @@ learning evidence lives in `learning-records/`.
 - Omarchy 4.0.0.alpha (quattro) with tmux 3.7c + shell functions (`tdl`, `tds`, `tslm`, `tsl`,
   `ga`, `gd`) — fallback control room if herdr is unavailable.
 - Repo: this worktree is branch `dsv41fmax`; main checkout at `~/Work/parallel-agent-orchestration`
-  (branch `master`). No git remote configured. Workspace files stay on this branch until merged.
+  (branch `master`). Workspace files stay on this branch until merged.
+- **Public repo (2026-10-16):** https://github.com/jimmerioles/parallel-agent-orchestration —
+  `master` pushed, `origin` set on the main checkout. The `gh` issue-tracker convention in
+  `AGENTS.md` is now live. `dsv41fmax` is not pushed (local-only working branch).
 - **Worktree quirk (verified 2026-10-05):** `herdr worktree create` refuses to run from a linked
   worktree — error `linked_worktree_source`, “start from the repo parent workspace.” Verified
   workaround from inside this worktree: `--cwd /home/jimmerioles/Work/parallel-agent-orchestration`
